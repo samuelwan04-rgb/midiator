@@ -3,7 +3,7 @@
 <head>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
-  <title>Midiator — One song. One bank.</title>
+  <title>Midiator — MIDI, mediated.</title>
   <meta name="description" content="Midiator turns the pedal presets you've already dialed in into one Morningstar bank per song, with tempo, tap and footswitch layout, and writes it to your controller without touching anything you made by hand.">
   <meta name="theme-color" content="#0e100f">
   <link rel="icon" href="assets/midiator-mark.svg" type="image/svg+xml">
@@ -36,6 +36,7 @@
         <a class="pill pill--cta" href="#access">Get early access</a>
       </nav>
     </div>
+    <div class="progress" aria-hidden="true"></div>
   </header>
 
   <main>
@@ -43,22 +44,28 @@
     <!-- Hero -->
     <section class="hero">
       <div class="hero__inner">
-        <h1 class="display">
-          <span class="line">One song.</span>
-          <span class="line">One <em class="grad">bank.</em></span>
+        <h1 class="display" data-split="chars">
+          <span class="line">MIDI,</span>
+          <span class="line"><em class="grad">mediated.</em></span>
         </h1>
 
         <div class="hero__device" aria-hidden="true">
           <div class="mc6">
             <div class="mc6__screen">
-              <span class="mc6__bank">B23</span>
-              <span class="mc6__title">Amazing Grace</span>
-              <span class="mc6__bpm">72 BPM</span>
+              <div class="mc6__top">
+                <span class="mc6__bank">B23</span>
+                <span class="mc6__title">Holy Forever</span>
+                <span class="mc6__bpm">72 BPM</span>
+              </div>
+              <div class="mc6__msg">
+                <span class="mc6__led"></span>
+                <span class="mc6__msgtext">TimeLine 12B &middot; BigSky 04A</span>
+              </div>
             </div>
             <div class="mc6__grid">
               <div class="sw" data-i="3"><span class="sw__led"></span><span class="sw__name">Bridge</span><span class="sw__knob"></span></div>
               <div class="sw" data-i="4"><span class="sw__led"></span><span class="sw__name">Outro</span><span class="sw__knob"></span></div>
-              <div class="sw sw--tempo" data-i="5"><span class="sw__led"></span><span class="sw__name">TAP 72</span><span class="sw__knob"></span></div>
+              <div class="sw sw--tempo"><span class="sw__led"></span><span class="sw__name">TAP 72</span><span class="sw__knob"></span></div>
               <div class="sw" data-i="0"><span class="sw__led"></span><span class="sw__name">Intro</span><span class="sw__knob"></span></div>
               <div class="sw" data-i="1"><span class="sw__led"></span><span class="sw__name">Verse</span><span class="sw__knob"></span></div>
               <div class="sw" data-i="2"><span class="sw__led"></span><span class="sw__name">Chorus</span><span class="sw__knob"></span></div>
@@ -69,8 +76,8 @@
         </div>
 
         <div class="hero__foot">
-          <p class="bracket">{ MIDI setlists for guitarists }</p>
-          <p class="lede">Midiator turns the presets you've already dialed in on your pedals into one Morningstar bank per song, with tempo, tap and footswitch layout, then writes it straight to your controller.</p>
+          <p class="bracket">{ The MIDI mediator for guitarists }</p>
+          <p class="lede">Midiator sits between you and your rig. It turns the presets you've already dialed in into one Morningstar bank per song, with tempo, tap and footswitch layout, then writes it straight to your controller.</p>
           <div class="actions">
             <a class="pill pill--cta" href="#access">Get early access</a>
             <a class="pill" href="#how">See how it works</a>
@@ -79,96 +86,115 @@
       </div>
     </section>
 
-    <!-- Why -->
-    <section class="statement wrap reveal">
-      <p class="bracket">{ Why Midiator }</p>
-      <h2 class="heading">Sunday's setlist shouldn't eat your <span class="muted-strike">Saturday night.</span></h2>
-      <p class="body-lg">You already spent hours getting every delay and reverb right. Midiator doesn't guess new sounds. It recalls the ones you made, song by song, section by section, with exact Program Change math.</p>
+    <!-- Gear marquee -->
+    <div class="marquee" aria-hidden="true">
+      <div class="marquee__track">
+        <span>Morningstar MC6 mkII</span><i></i><span>Strymon TimeLine</span><i></i><span>Strymon BigSky</span><i></i><span>Meris LVX</span><i></i><span>Meris MercuryX</span><i></i><span>Neural DSP Quad Cortex</span><i></i><span>Eventide H90</span><i></i>
+        <span>Morningstar MC6 mkII</span><i></i><span>Strymon TimeLine</span><i></i><span>Strymon BigSky</span><i></i><span>Meris LVX</span><i></i><span>Meris MercuryX</span><i></i><span>Neural DSP Quad Cortex</span><i></i><span>Eventide H90</span><i></i>
+      </div>
+    </div>
+
+    <!-- Statement -->
+    <section class="statement wrap">
+      <p class="bracket reveal">{ Why Midiator }</p>
+      <h2 class="heading heading--xl" data-scrub>MIDI controlling, made <em class="grad">simple.</em></h2>
+      <p class="body-lg reveal">Sunday's setlist shouldn't eat your Saturday night. You already spent hours getting every delay and reverb right. Midiator doesn't guess new sounds. It recalls the ones you made, song by song, section by section, with exact Program Change math.</p>
     </section>
 
     <!-- Features -->
     <section class="wrap features" id="features">
       <p class="bracket reveal">{ Inside Midiator }</p>
 
-      <article class="feature reveal">
-        <div class="feature__art">
-          <div class="mock mock--setlist">
-            <div class="song">
-              <span class="grip">⋮⋮</span>
-              <div class="song__meta">
-                <strong>Amazing Grace</strong>
-                <span>Bank 23 &middot; 72 BPM</span>
+      <article class="feature">
+        <div class="feature__art reveal reveal--wipe">
+          <div class="mock mock--setlist" data-scene="setlist">
+            <div class="songs">
+              <div class="songcard">
+                <div class="song">
+                  <span class="grip">⋮⋮</span>
+                  <div class="song__meta">
+                    <strong>Holy Forever</strong>
+                    <span>Bank <b class="bank">23</b> &middot; 72 BPM</span>
+                  </div>
+                  <span class="status status--ok">Synced</span>
+                </div>
+                <div class="minigrid">
+                  <span data-o="3">Bridge</span><span data-o="4">Outro</span><span class="t">TAP</span>
+                  <span data-o="0">Intro</span><span data-o="1" class="on">Verse</span><span data-o="2">Chorus</span>
+                </div>
               </div>
-              <span class="status status--ok">Synced</span>
-            </div>
-            <div class="minigrid">
-              <span>Bridge</span><span>Outro</span><span class="t">TAP</span>
-              <span>Intro</span><span class="on">Verse</span><span>Chorus</span>
-            </div>
-            <div class="song">
-              <span class="grip">⋮⋮</span>
-              <div class="song__meta">
-                <strong>It Is Well</strong>
-                <span>Bank 24 &middot; 64 BPM</span>
+              <div class="songcard">
+                <div class="song">
+                  <span class="grip">⋮⋮</span>
+                  <div class="song__meta">
+                    <strong>Goodness of God</strong>
+                    <span>Bank <b class="bank">24</b> &middot; 64 BPM</span>
+                  </div>
+                  <span class="status status--new">3 changes</span>
+                </div>
               </div>
-              <span class="status status--new">3 changes</span>
-            </div>
-            <div class="song">
-              <span class="grip">⋮⋮</span>
-              <div class="song__meta">
-                <strong>Be Thou My Vision</strong>
-                <span>Bank 25 &middot; 80 BPM</span>
+              <div class="songcard">
+                <div class="song">
+                  <span class="grip">⋮⋮</span>
+                  <div class="song__meta">
+                    <strong>Great Are You Lord</strong>
+                    <span>Bank <b class="bank">25</b> &middot; 80 BPM</span>
+                  </div>
+                  <span class="status status--ok">Synced</span>
+                </div>
               </div>
-              <span class="status status--ok">Synced</span>
             </div>
           </div>
         </div>
         <div class="feature__copy">
-          <p class="label c-pink">Setlists</p>
-          <h3 class="subheading">Every song card is a bank on your board.</h3>
-          <p class="body-lg">Drag songs to set the order, drag switches to lay out each song exactly like the hardware. Add a BPM and a Tap or &minus;1 / +1 switch. Status pills tell you what's already on the controller and what's changed.</p>
+          <p class="label c-pink reveal">Setlists</p>
+          <h3 class="subheading" data-split>Every song card is a bank on your board.</h3>
+          <p class="body-lg reveal">Drag songs to set the order, drag switches to lay out each song exactly like the hardware. Add a BPM and a Tap or &minus;1 / +1 switch. Status pills tell you what's already on the controller and what's changed.</p>
         </div>
       </article>
 
-      <article class="feature reveal">
-        <div class="feature__art">
-          <div class="mock mock--list">
-            <div class="row"><strong>Amazing Grace</strong><span class="chip c-lilac-bg">In setlist &middot; bank 23</span></div>
-            <div class="row"><strong>Be Thou My Vision</strong><span class="chip c-lilac-bg">In setlist &middot; bank 25</span></div>
-            <div class="row"><strong>Come Thou Fount</strong><span class="chip chip--ghost">+ Add to setlist</span></div>
-            <div class="row"><strong>Holy, Holy, Holy</strong><span class="chip chip--ghost">+ Add to setlist</span></div>
-            <div class="row"><strong>It Is Well</strong><span class="chip c-lilac-bg">In setlist &middot; bank 24</span></div>
+      <article class="feature">
+        <div class="feature__art reveal reveal--wipe">
+          <div class="mock mock--list" data-scene="songs">
+            <div class="row"><strong>Build My Life</strong><span class="chip chip--ghost" data-bank="26">+ Add to setlist</span></div>
+            <div class="row"><strong>Goodness of God</strong><span class="chip c-lilac-bg">In setlist &middot; bank 24</span></div>
+            <div class="row"><strong>Gratitude</strong><span class="chip chip--ghost" data-bank="27">+ Add to setlist</span></div>
+            <div class="row"><strong>Great Are You Lord</strong><span class="chip c-lilac-bg">In setlist &middot; bank 25</span></div>
+            <div class="row"><strong>Holy Forever</strong><span class="chip c-lilac-bg">In setlist &middot; bank 23</span></div>
+            <span class="cursor" aria-hidden="true"></span>
           </div>
         </div>
         <div class="feature__copy">
-          <p class="label c-lilac">Songs</p>
-          <h3 class="subheading">Build a song once. Use it every week.</h3>
-          <p class="body-lg">Your song library keeps each song's sections, sounds and tempo. Pull it into this week's setlist in two clicks. Fix it in one place and every setlist that uses it follows.</p>
+          <p class="label c-lilac reveal">Songs</p>
+          <h3 class="subheading" data-split>Build a song once. Use it every week.</h3>
+          <p class="body-lg reveal">Your song library keeps each song's sections, sounds and tempo. Pull it into this week's setlist in two clicks. Fix it in one place and every setlist that uses it follows.</p>
         </div>
       </article>
 
-      <article class="feature reveal">
-        <div class="feature__art">
-          <div class="mock mock--presets">
+      <article class="feature">
+        <div class="feature__art reveal reveal--wipe">
+          <div class="mock mock--presets" data-scene="presets">
             <div class="thead"><span>Pedal</span><span>Preset</span><span>Slot</span></div>
-            <div class="trow"><span>TimeLine</span><strong>Dotted 8th</strong><code>12B</code></div>
-            <div class="trow"><span>BigSky</span><strong>Worship Swell</strong><code>04A</code></div>
-            <div class="trow"><span>BigSky</span><strong>Cathedral</strong><code>71C</code></div>
-            <div class="trow"><span>Meris LVX</span><strong>Ambient Wash</strong><code>PC 17</code></div>
-            <div class="trow"><span>Quad Cortex</span><strong>Clean Edge</strong><code>9D</code></div>
+            <div class="trow" data-msg="PC 23"><span>TimeLine</span><strong>Dotted 8th</strong><code>12B</code></div>
+            <div class="trow" data-msg="PC 9"><span>BigSky</span><strong>Worship Swell</strong><code>04A</code></div>
+            <div class="trow" data-msg="CC 0 = 1 &middot; PC 84"><span>BigSky</span><strong>Cathedral</strong><code>71C</code></div>
+            <div class="trow" data-msg="PC 17"><span>Meris LVX</span><strong>Ambient Wash</strong><code>PC 17</code></div>
+            <div class="trow" data-msg="CC 0 &middot; CC 32 &middot; PC 67"><span>Quad Cortex</span><strong>Clean Edge</strong><code>9D</code></div>
+            <div class="midi-out"><span class="midi-out__dot"></span><code class="midi-out__text">Cathedral &rarr; CC 0 = 1 &middot; PC 84</code></div>
           </div>
         </div>
         <div class="feature__copy">
-          <p class="label c-green">My presets</p>
-          <h3 class="subheading">Catalog the sounds you've already made.</h3>
-          <p class="body-lg">Tell Midiator what's saved where, as bank and letter or plain number, the way your pedal counts. It works out the bank-select and Program Change messages, including Strymon presets past 127.</p>
+          <p class="label c-green reveal">My presets</p>
+          <h3 class="subheading" data-split>Catalog the sounds you've already made.</h3>
+          <p class="body-lg reveal">Tell Midiator what's saved where, as bank and letter or plain number, the way your pedal counts. It works out the bank-select and Program Change messages, including Strymon presets past 127.</p>
         </div>
       </article>
 
-      <article class="feature reveal">
-        <div class="feature__art">
-          <div class="mock mock--chat">
-            <div class="bubble bubble--me">Dotted eighth for the chorus, three repeats, a bit darker.</div>
+      <article class="feature">
+        <div class="feature__art reveal reveal--wipe">
+          <div class="mock mock--chat" data-scene="chat">
+            <div class="bubble bubble--me"><span class="type">Dotted eighth for the chorus, three repeats, a bit darker.</span></div>
+            <div class="dots"><i></i><i></i><i></i></div>
             <div class="bubble bubble--ai">
               <span>TimeLine &middot; Digital</span>
               <div class="chips">
@@ -176,14 +202,14 @@
                 <code>Repeats 3</code>
                 <code>Filter &minus;20%</code>
               </div>
-              <span class="audition">&#9654; Audition live</span>
+              <span class="audition"><span class="bars"><i></i><i></i><i></i><i></i></span>Audition live</span>
             </div>
           </div>
         </div>
         <div class="feature__copy">
-          <p class="label c-blue">Tone lab</p>
-          <h3 class="subheading">Describe a sound when you need a new one.</h3>
-          <p class="body-lg">Tone lab uses Claude and real device profiles to suggest settings from plain language, then lets you audition them on your rig. Auditioning only changes the live sound. It never saves over a preset.</p>
+          <p class="label c-blue reveal">Tone lab</p>
+          <h3 class="subheading" data-split>Describe a sound when you need a new one.</h3>
+          <p class="body-lg reveal">Tone lab uses Claude and real device profiles to suggest settings from plain language, then lets you audition them on your rig. Auditioning only changes the live sound. It never saves over a preset.</p>
         </div>
       </article>
     </section>
@@ -192,19 +218,19 @@
     <section class="how" id="how">
       <div class="wrap">
         <p class="bracket reveal">{ How it works }</p>
-        <h2 class="heading reveal">Three steps to Sunday.</h2>
+        <h2 class="heading" data-split>Three steps to Sunday.</h2>
         <ol class="steps">
           <li class="step reveal">
             <span class="step__n">01</span>
             <h3>Catalog</h3>
             <p>Add the presets you already use on each pedal. Do it once; add more whenever you save something new.</p>
           </li>
-          <li class="step reveal">
+          <li class="step reveal" style="--d:.15s">
             <span class="step__n">02</span>
             <h3>Build</h3>
             <p>Make a setlist. For each song, name the sections and pick which preset each pedal plays. Set the BPM.</p>
           </li>
-          <li class="step reveal">
+          <li class="step reveal" style="--d:.3s">
             <span class="step__n">03</span>
             <h3>Send</h3>
             <p>Review exactly what will change on the controller, switch by switch, then write. Every write is read back and checked.</p>
@@ -215,12 +241,12 @@
 
     <!-- Safety -->
     <section class="wrap safety" id="safety">
-      <div class="safety__copy reveal">
-        <p class="bracket">{ Safety first }</p>
-        <h2 class="heading">Never overwrites what you made by hand.</h2>
-        <p class="body-lg">Midiator only writes to a controller preset that's empty or still exactly what Midiator put there last time. Anything you edited yourself is marked and left alone. Nothing gets saved to your pedals, ever.</p>
+      <div class="safety__copy">
+        <p class="bracket reveal">{ Safety first }</p>
+        <h2 class="heading" data-split>Never overwrites what you made by hand.</h2>
+        <p class="body-lg reveal">Midiator only writes to a controller preset that's empty or still exactly what Midiator put there last time. Anything you edited yourself is marked and left alone. Nothing gets saved to your pedals, ever.</p>
       </div>
-      <div class="review reveal" aria-label="Example send review">
+      <div class="review reveal reveal--wipe" data-scene="review" aria-label="Example send review">
         <div class="review__head">
           <strong>Send 3 songs to MC6</strong>
           <span>Banks 23&ndash;25</span>
@@ -232,9 +258,10 @@
           <li><code>B24 &middot; E</code><span>&mdash;</span><em class="tag tag--clr">Cleared</em></li>
           <li><code>B25 &middot; D</code><span>My old lead</span><em class="tag tag--block">Your preset &middot; kept</em></li>
         </ul>
+        <div class="review__bar"><span></span></div>
         <div class="review__foot">
-          <span>Every write is read back and verified.</span>
-          <span class="pill pill--sm pill--cta">Write</span>
+          <span class="review__status">Every write is read back and verified.</span>
+          <span class="pill pill--sm pill--cta review__btn">Write</span>
         </div>
       </div>
     </section>
@@ -243,7 +270,7 @@
     <section class="gear" id="gear">
       <div class="wrap">
         <p class="bracket reveal">{ Works with }</p>
-        <h2 class="heading reveal">Your board, not a generic one.</h2>
+        <h2 class="heading" data-split>Your board, not a generic one.</h2>
         <p class="body-lg gear__intro reveal">Midiator knows each pedal's real MIDI map, taken from its manual. Here's where support stands today.</p>
 
         <div class="gear__grid">
@@ -284,13 +311,36 @@
             <span class="level level--part">Beta</span>
           </div>
         </div>
+
+        <div class="request reveal">
+          <div class="request__copy">
+            <h3>Pedal or MIDI controller not on the list?</h3>
+            <p>Tell us what's on your board. We'll dig into the MIDI manual and add it to Midiator.</p>
+          </div>
+          <form class="request__form" id="pedal-form" data-form="gear" action="https://formsubmit.co/samuelwan04@gmail.com" method="POST">
+            <label class="field">
+              <span>Your pedal or MIDI controller</span>
+              <input type="text" name="pedal" placeholder="e.g. Chase Bliss Blooper or Boss ES-8" required maxlength="120" autocomplete="off">
+            </label>
+            <label class="field">
+              <span>Your email <em>(optional, so we can tell you when it's in)</em></span>
+              <input type="email" name="email" placeholder="you@example.com" maxlength="120" autocomplete="email">
+            </label>
+            <input type="text" name="_honey" class="honey" tabindex="-1" autocomplete="off" aria-hidden="true">
+            <input type="hidden" name="_subject" value="Midiator: gear request">
+            <input type="hidden" name="_template" value="table">
+            <input type="hidden" name="_captcha" value="false">
+            <button class="pill pill--cta" type="submit">Send request</button>
+            <p class="request__note" role="status" aria-live="polite"></p>
+          </form>
+        </div>
       </div>
     </section>
 
     <!-- FAQ -->
     <section class="wrap faq" id="faq">
       <p class="bracket reveal">{ Questions }</p>
-      <h2 class="heading reveal">Good to know.</h2>
+      <h2 class="heading" data-split>Good to know.</h2>
       <div class="faq__list">
         <details class="reveal">
           <summary>Does Midiator change the presets saved on my pedals?</summary>
@@ -319,11 +369,29 @@
     <section class="cta" id="access">
       <div class="wrap">
         <p class="bracket reveal">{ Early access }</p>
-        <h2 class="display display--cta reveal">Play the <em class="grad">set.</em></h2>
-        <p class="body-lg cta__lede reveal">Midiator is in early access for macOS. Tell us what's on your board and we'll let you know when your build is ready.</p>
-        <div class="actions reveal">
-          <a class="pill pill--cta pill--lg" href="mailto:hello@midiator.io?subject=Midiator%20early%20access&amp;body=My%20controller%3A%20%0AMy%20pedals%3A%20">Request early access</a>
-        </div>
+        <h2 class="display display--cta" data-split="chars">Play the <em class="grad">set.</em></h2>
+        <p class="body-lg cta__lede reveal">Midiator is in early access for macOS. Leave your email and what's on your board, and we'll let you know when your build is ready.</p>
+        <form class="signup reveal" id="access-form" data-form="access" action="https://formsubmit.co/samuelwan04@gmail.com" method="POST">
+          <div class="signup__grid">
+            <label class="field">
+              <span>Your email</span>
+              <input type="email" name="email" placeholder="you@example.com" required maxlength="120" autocomplete="email">
+            </label>
+            <label class="field">
+              <span>Your controller <em>(optional)</em></span>
+              <input type="text" name="controller" placeholder="e.g. Morningstar MC6 mkII" maxlength="120" autocomplete="off">
+            </label>
+            <label class="field signup__wide">
+              <span>Pedals on your board <em>(optional)</em></span>
+              <input type="text" name="pedals" placeholder="e.g. TimeLine, BigSky, HX Stomp" maxlength="300" autocomplete="off">
+            </label>
+          </div>
+          <input type="text" name="_honey" class="honey" tabindex="-1" autocomplete="off" aria-hidden="true">
+          <input type="hidden" name="_template" value="table">
+          <input type="hidden" name="_captcha" value="false">
+          <button class="pill pill--cta pill--lg" type="submit">Request early access</button>
+          <p class="request__note" role="status" aria-live="polite"></p>
+        </form>
       </div>
     </section>
 
@@ -336,7 +404,7 @@
           <img src="assets/midiator-mark.svg" alt="" width="32" height="32">
           <span>Midiator</span>
         </a>
-        <p class="bracket">{ One song. One bank. }</p>
+        <p class="bracket">{ MIDI, mediated. }</p>
       </div>
       <div class="footer__cols">
         <div>

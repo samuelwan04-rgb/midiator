@@ -21,6 +21,15 @@ then go to http://localhost:8000.
 
 On GitHub, open the repo's **Settings → Pages**, set **Source** to "Deploy from a branch", choose `main` and `/ (root)`, and save. The site appears at `https://<your-username>.github.io/midiator/` after a minute or two.
 
-## Before launch
+## Email
 
-The "Request early access" button opens an email to `hello@midiator.io`. That domain isn't registered yet, so change the address in `index.html` (search for `mailto:`) or swap in a sign-up form.
+Everything goes to samuelwan04@gmail.com for now.
+
+Both forms on the site send through [FormSubmit](https://formsubmit.co), a free form-to-email service:
+
+- **Early access** (bottom of the page): email, controller and pedals. Subject "Midiator early access: …".
+- **"Pedal or MIDI controller not on the list?"** (under Gear). Subject "Midiator gear request: …".
+
+**One-time setup:** the very first request sends a "confirm your form" email to samuelwan04@gmail.com. Click the activate link in it, and every request after that arrives in your inbox. Send yourself a test request once the site is live to trigger it. The form can't send from a page opened by double-clicking `index.html`; it needs the online site (or `python3 -m http.server`).
+
+To change the address later, search `index.html` and `script.js` for `samuelwan04@gmail.com`.
