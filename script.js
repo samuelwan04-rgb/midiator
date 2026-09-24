@@ -95,6 +95,25 @@ if (!reduceMotion) {
   window.addEventListener("resize", alignGradients);
 }
 
+// Eyebrows: the braces start closed and open to reveal their words.
+const eyebrows = reduceMotion
+  ? []
+  : [...document.querySelectorAll(".bracket")].filter((el) => !el.closest(".footer") && /^\{.*\}$/.test(el.textContent.trim()));
+eyebrows.forEach((el) => {
+  const words = el.textContent.trim().slice(1, -1).trim();
+  const part = (cls, text) => Object.assign(document.createElement("span"), { className: cls, textContent: text });
+  el.setAttribute("aria-label", `{ ${words} }`);
+  el.replaceChildren(part("br br--open", "{"), part("br__words", words), part("br br--close", "}"));
+  [...el.children].forEach((c) => c.setAttribute("aria-hidden", "true"));
+  el.classList.add("brackets");
+});
+function measureEyebrows() {
+  eyebrows.forEach((el) => el.style.setProperty("--half", `${el.querySelector(".br__words").offsetWidth / 2}px`));
+}
+measureEyebrows();
+document.fonts?.ready.then(measureEyebrows);
+window.addEventListener("resize", measureEyebrows);
+
 // ---------- Reveal on scroll ----------
 const toReveal = [...document.querySelectorAll(".reveal"), ...document.querySelectorAll(".split")];
 
@@ -124,6 +143,8 @@ if (reduceMotion || !("IntersectionObserver" in window)) {
 
   const heroTitle = document.querySelector(".hero .display");
   requestAnimationFrame(() => setTimeout(() => heroTitle.classList.add("is-in"), 80));
+  const heroEyebrow = document.querySelector(".hero .bracket");
+  setTimeout(() => heroEyebrow?.classList.add("is-in"), 1100);
 }
 
 // ---------- Scroll-linked effects ----------
@@ -178,7 +199,7 @@ if (!reduceMotion && finePointer) {
     mc6.style.setProperty("--rx", "0deg");
   });
 
-  document.querySelectorAll(".gcard").forEach((card) => {
+  document.querySelectorAll(".brand-card").forEach((card) => {
     card.addEventListener("pointermove", (e) => {
       const r = card.getBoundingClientRect();
       card.style.setProperty("--mx", `${e.clientX - r.left}px`);
