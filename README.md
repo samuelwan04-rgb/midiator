@@ -23,13 +23,13 @@ On GitHub, open the repo's **Settings → Pages**, set **Source** to "Deploy fro
 
 ## Email
 
-Everything goes to samuelwan04@gmail.com for now.
+Both forms deliver to Sam's Gmail. The page only contains FormSubmit's random alias for that address (`60afdc30…` in the two `action=` lines in `index.html`), so the address itself isn't public.
 
 Both forms on the site send through [FormSubmit](https://formsubmit.co), a free form-to-email service:
 
 - **Early access** (bottom of the page): email, controller and pedals. Subject "Midiator early access: …".
 - **"Pedal or MIDI controller not on the list?"** (under Gear). Subject "Midiator gear request: …".
 
-**One-time setup:** the very first request sends a "confirm your form" email to samuelwan04@gmail.com. Click the activate link in it, and every request after that arrives in your inbox. Send yourself a test request once the site is live to trigger it. The form can't send from a page opened by double-clicking `index.html`; it needs the online site (or `python3 -m http.server`).
+**One-time setup:** the very first request sends a "confirm your form" email to that Gmail inbox. Click the activate link in it, and every request after that arrives in your inbox. Send yourself a test request once the site is live to trigger it. The form can't send from a page opened by double-clicking `index.html`; it needs the online site (or `python3 -m http.server`).
 
-To change the address later, search `index.html` and `script.js` for `samuelwan04@gmail.com`.
+To send to a different address, replace the alias in both `action=` lines with the new address, then use the alias FormSubmit gives you for it.

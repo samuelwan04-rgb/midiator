@@ -541,13 +541,9 @@ function wireForm(form) {
   const note = form.querySelector(".request__note");
   const fields = [...form.children];
 
-  const fallback = (message, subject) => {
+  const fallback = (message) => {
     note.className = "request__note error";
-    note.textContent = `${message} You can also email `;
-    const mail = document.createElement("a");
-    mail.href = `mailto:samuelwan04@gmail.com?subject=${encodeURIComponent(subject)}`;
-    mail.textContent = "samuelwan04@gmail.com";
-    note.append(mail, ".");
+    note.textContent = message;
   };
 
   const showThanks = (data) => {
@@ -584,7 +580,7 @@ function wireForm(form) {
 
     // FormSubmit rejects pages opened straight from disk (file://), so say so instead of failing.
     if (location.protocol === "file:") {
-      fallback("This form only sends once the site is online, not when the file is opened from your computer.", subject);
+      fallback("This form only sends once the site is online, not when the file is opened from your computer.");
       return;
     }
 
@@ -606,14 +602,14 @@ function wireForm(form) {
         // First submission from a new web address: FormSubmit emails the site owner an activation link.
         note.className = "request__note";
         note.textContent =
-          "Almost there: the form is waiting to be activated. Check samuelwan04@gmail.com for FormSubmit's activation email, click the link, then send this again.";
+          "Almost there: the form is waiting to be activated. Check the site owner's inbox for FormSubmit's activation email, click the link, then send this again.";
       } else {
         console.warn("FormSubmit:", res.status, json.message);
-        fallback("That didn't go through. Try again in a moment.", subject);
+        fallback("That didn't go through. Try again in a moment.");
       }
     } catch (err) {
       console.warn("FormSubmit:", err);
-      fallback("That didn't go through. Check your connection and try again.", subject);
+      fallback("That didn't go through. Check your connection and try again.");
     } finally {
       button.disabled = false;
     }
