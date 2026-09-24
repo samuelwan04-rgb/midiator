@@ -889,6 +889,78 @@ a, button, summary, .pill { cursor: var(--cur-hover, pointer); }
 .level--full { color: var(--green); border: 1px solid rgba(171, 255, 132, .4); }
 .level--part { color: var(--muted); border: 1px solid var(--line); }
 
+/* pedal request */
+.request {
+  margin-top: 24px;
+  display: grid;
+  grid-template-columns: 1fr 1.3fr;
+  gap: clamp(24px, 4vw, 64px);
+  align-items: start;
+  padding: clamp(24px, 3.5vw, 40px);
+  border: 1px dashed var(--line);
+  border-radius: 12px;
+}
+@media (max-width: 860px) { .request { grid-template-columns: 1fr; } }
+.request__copy h3 {
+  font-size: clamp(26px, 2.6vw, 34px);
+  font-weight: 600;
+  letter-spacing: -0.025em;
+  margin-bottom: 12px;
+}
+.request__copy p { color: var(--muted); max-width: 34ch; }
+.request__form { display: flex; flex-direction: column; gap: 16px; align-items: flex-start; }
+.field { display: flex; flex-direction: column; gap: 8px; width: 100%; font-size: 14px; }
+.field em { font-style: normal; color: var(--dim); }
+.field input {
+  width: 100%;
+  font: inherit;
+  font-size: 17px;
+  color: var(--cream);
+  background: var(--panel);
+  border: 1px solid var(--line);
+  border-radius: 100px;
+  padding: 14px 20px;
+  transition: border-color .2s;
+}
+.field input::placeholder { color: var(--dim); }
+.field input:focus { outline: none; border-color: var(--brand-2); }
+.honey { position: absolute; left: -9999px; width: 1px; height: 1px; opacity: 0; }
+.request__form button { font-family: inherit; }
+.request__form button:disabled { opacity: .6; cursor: progress; }
+.request__note { font-size: 15px; color: var(--muted); min-height: 1.4em; }
+.request__note.error { color: var(--brand-2); }
+.request__note a { color: var(--brand-2); }
+
+.request__done {
+  display: flex;
+  gap: 16px;
+  align-items: flex-start;
+  animation: fade .6s var(--ease);
+}
+.request__done svg { flex: none; width: 44px; height: 44px; }
+.request__done svg circle { stroke: var(--green); }
+.request__done svg path {
+  stroke: var(--green);
+  stroke-dasharray: 24;
+  stroke-dashoffset: 24;
+  animation: tick .6s .25s var(--ease) forwards;
+}
+@keyframes tick { to { stroke-dashoffset: 0; } }
+.request__done strong { display: block; font-size: 20px; margin-bottom: 4px; }
+.request__done p { color: var(--muted); }
+.request__done button {
+  margin-top: 14px;
+  background: none;
+  border: 0;
+  padding: 0;
+  font: inherit;
+  font-size: 15px;
+  color: var(--brand-2);
+  text-decoration: underline;
+  text-underline-offset: 3px;
+  cursor: var(--cur-hover, pointer);
+}
+
 /* ---------- FAQ ---------- */
 .faq {
   padding-top: var(--section);
@@ -1025,4 +1097,7 @@ a, button, summary, .pill { cursor: var(--cur-hover, pointer); }
   .reveal, .reveal--wipe, .reveal--wipe > .mock { opacity: 1; transform: none; clip-path: none; }
   .step::before { transform: none; }
   .hero .line, .hero__device { translate: none; }
+}
+@media (prefers-reduced-motion: reduce) {
+  .request__done svg path { stroke-dashoffset: 0; }
 }

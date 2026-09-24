@@ -516,3 +516,61 @@ scene(reviewEl, null, async (wait) => {
   status.classList.add("ok");
   await wait(3000);
 });
+
+// ---------- Pedal request form ----------
+// Sent through FormSubmit, which emails each request on to the address in the form's action.
+const pedalForm = document.getElementById("pedal-form");
+const pedalNote = pedalForm.querySelector(".request__note");
+const pedalFields = [...pedalForm.children];
+
+pedalForm.addEventListener("submit", async (e) => {
+  e.preventDefault();
+  const data = Object.fromEntries(new FormData(pedalForm));
+  const pedal = data.pedal.trim();
+  if (!pedal) return;
+  data._subject = `Midiator pedal request: ${pedal}`;
+
+  const button = pedalForm.querySelector("button");
+  button.disabled = true;
+  pedalNote.className = "request__note";
+  pedalNote.textContent = "Sending…";
+
+  try {
+    const res = await fetch(pedalForm.action.replace("formsubmit.co/", "formsubmit.co/ajax/"), {
+      method: "POST",
+      headers: { "Content-Type": "application/json", Accept: "application/json" },
+      body: JSON.stringify(data),
+    });
+    const json = await res.json().catch(() => ({}));
+    if (!res.ok || String(json.success) !== "true") throw new Error(json.message || res.status);
+    showPedalThanks(pedal, Boolean(data.email));
+  } catch {
+    pedalNote.className = "request__note error";
+    pedalNote.textContent = "That didn't go through. Try again, or email ";
+    const mail = document.createElement("a");
+    mail.href = `mailto:samuelwan04@gmail.com?subject=${encodeURIComponent(`Midiator pedal request: ${pedal}`)}`;
+    mail.textContent = "samuelwan04@gmail.com";
+    pedalNote.append(mail, ".");
+  } finally {
+    button.disabled = false;
+  }
+});
+
+function showPedalThanks(pedal, hasEmail) {
+  const done = document.createElement("div");
+  done.className = "request__done";
+  done.innerHTML =
+    '<svg viewBox="0 0 44 44" fill="none" stroke-width="2" aria-hidden="true"><circle cx="22" cy="22" r="20"/><path d="M13 22.5l6 6 12-13" stroke-linecap="round" stroke-linejoin="round"/></svg><div><strong></strong><p></p><button type="button">Request another pedal</button></div>';
+  done.querySelector("strong").textContent = "Got it, thanks!";
+  done.querySelector("p").textContent = hasEmail
+    ? `${pedal} is on our list. We'll email you when it works with Midiator.`
+    : `${pedal} is on our list. Check back soon.`;
+  done.setAttribute("role", "status");
+  done.querySelector("button").addEventListener("click", () => {
+    pedalForm.reset();
+    pedalNote.textContent = "";
+    pedalForm.replaceChildren(...pedalFields);
+    pedalForm.querySelector("input[name=pedal]").focus();
+  });
+  pedalForm.replaceChildren(done);
+}

@@ -311,6 +311,29 @@
             <span class="level level--part">Beta</span>
           </div>
         </div>
+
+        <div class="request reveal">
+          <div class="request__copy">
+            <h3>Pedal not on the list?</h3>
+            <p>Tell us what's on your board. We'll dig into its MIDI manual and add it to Midiator.</p>
+          </div>
+          <form class="request__form" id="pedal-form" action="https://formsubmit.co/samuelwan04@gmail.com" method="POST">
+            <label class="field">
+              <span>Your pedal</span>
+              <input type="text" name="pedal" placeholder="e.g. Chase Bliss Blooper" required maxlength="120" autocomplete="off">
+            </label>
+            <label class="field">
+              <span>Your email <em>(optional, so we can tell you when it's in)</em></span>
+              <input type="email" name="email" placeholder="you@example.com" maxlength="120" autocomplete="email">
+            </label>
+            <input type="text" name="_honey" class="honey" tabindex="-1" autocomplete="off" aria-hidden="true">
+            <input type="hidden" name="_subject" value="Midiator: pedal request">
+            <input type="hidden" name="_template" value="table">
+            <input type="hidden" name="_captcha" value="false">
+            <button class="pill pill--cta" type="submit">Send request</button>
+            <p class="request__note" role="status" aria-live="polite"></p>
+          </form>
+        </div>
       </div>
     </section>
 
@@ -349,7 +372,7 @@
         <h2 class="display display--cta" data-split="chars">Play the <em class="grad">set.</em></h2>
         <p class="body-lg cta__lede reveal">Midiator is in early access for macOS. Tell us what's on your board and we'll let you know when your build is ready.</p>
         <div class="actions reveal">
-          <a class="pill pill--cta pill--lg" href="mailto:hello@midiator.io?subject=Midiator%20early%20access&amp;body=My%20controller%3A%20%0AMy%20pedals%3A%20">Request early access</a>
+          <a class="pill pill--cta pill--lg" href="mailto:samuelwan04@gmail.com?subject=Midiator%20early%20access&amp;body=My%20controller%3A%20%0AMy%20pedals%3A%20">Request early access</a>
         </div>
       </div>
     </section>
