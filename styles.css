@@ -1018,6 +1018,22 @@ a, button, summary, .pill { cursor: var(--cur-hover, pointer); }
 .display--cta { margin-bottom: 32px; }
 .cta__lede { margin-bottom: 40px; }
 
+.signup {
+  max-width: 760px;
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: 20px;
+}
+.signup__grid {
+  width: 100%;
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 16px;
+}
+.signup__wide { grid-column: 1 / -1; }
+@media (max-width: 640px) { .signup__grid { grid-template-columns: 1fr; } }
+
 /* ---------- Footer ---------- */
 .footer {
   background: var(--panel);

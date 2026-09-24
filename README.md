@@ -25,9 +25,11 @@ On GitHub, open the repo's **Settings → Pages**, set **Source** to "Deploy fro
 
 Everything goes to samuelwan04@gmail.com for now.
 
-- **"Request early access"** opens the visitor's own email app with a message to that address.
-- **"Pedal or MIDI controller not on the list?"** (under Gear) sends through [FormSubmit](https://formsubmit.co), a free form-to-email service, so visitors don't need an email app.
+Both forms on the site send through [FormSubmit](https://formsubmit.co), a free form-to-email service:
 
-**One-time setup for the gear form:** the very first request sends a "confirm your form" email to samuelwan04@gmail.com. Click the activate link in it, and every request after that arrives in your inbox. Send yourself a test request once the site is live to trigger it. The form can't send from a page opened by double-clicking `index.html`; it needs the online site (or `python3 -m http.server`).
+- **Early access** (bottom of the page): email, controller and pedals. Subject "Midiator early access: …".
+- **"Pedal or MIDI controller not on the list?"** (under Gear). Subject "Midiator gear request: …".
+
+**One-time setup:** the very first request sends a "confirm your form" email to samuelwan04@gmail.com. Click the activate link in it, and every request after that arrives in your inbox. Send yourself a test request once the site is live to trigger it. The form can't send from a page opened by double-clicking `index.html`; it needs the online site (or `python3 -m http.server`).
 
 To change the address later, search `index.html` and `script.js` for `samuelwan04@gmail.com`.

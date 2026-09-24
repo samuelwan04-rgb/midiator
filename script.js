@@ -517,80 +517,107 @@ scene(reviewEl, null, async (wait) => {
   await wait(3000);
 });
 
-// ---------- Pedal request form ----------
-// Sent through FormSubmit, which emails each request on to the address in the form's action.
-const pedalForm = document.getElementById("pedal-form");
-const pedalNote = pedalForm.querySelector(".request__note");
-const pedalFields = [...pedalForm.children];
+// ---------- Forms ----------
+// Both forms send through FormSubmit, which emails each one on to the address in the form's action.
+const formTypes = {
+  gear: {
+    subject: (d) => `Midiator gear request: ${d.pedal}`,
+    title: "Got it, thanks!",
+    message: (d) =>
+      d.email
+        ? `${d.pedal} is on our list. We'll email you when it works with Midiator.`
+        : `${d.pedal} is on our list. Check back soon.`,
+    again: "Request another one",
+  },
+  access: {
+    subject: (d) => `Midiator early access: ${d.email}`,
+    title: "You're on the list!",
+    message: (d) => `We'll email ${d.email} when your build is ready.`,
+  },
+};
 
-function pedalFallback(message, pedal) {
-  pedalNote.className = "request__note error";
-  pedalNote.textContent = `${message} You can also email `;
-  const mail = document.createElement("a");
-  mail.href = `mailto:samuelwan04@gmail.com?subject=${encodeURIComponent(`Midiator gear request: ${pedal}`)}`;
-  mail.textContent = "samuelwan04@gmail.com";
-  pedalNote.append(mail, ".");
-}
+function wireForm(form) {
+  const type = formTypes[form.dataset.form];
+  const note = form.querySelector(".request__note");
+  const fields = [...form.children];
 
-pedalForm.addEventListener("submit", async (e) => {
-  e.preventDefault();
-  const data = Object.fromEntries(new FormData(pedalForm));
-  const pedal = data.pedal.trim();
-  if (!pedal) return;
-  data._subject = `Midiator gear request: ${pedal}`;
+  const fallback = (message, subject) => {
+    note.className = "request__note error";
+    note.textContent = `${message} You can also email `;
+    const mail = document.createElement("a");
+    mail.href = `mailto:samuelwan04@gmail.com?subject=${encodeURIComponent(subject)}`;
+    mail.textContent = "samuelwan04@gmail.com";
+    note.append(mail, ".");
+  };
 
-  // FormSubmit rejects pages opened straight from disk (file://), so say so instead of failing.
-  if (location.protocol === "file:") {
-    pedalFallback("This form only sends once the site is online, not when the file is opened from your computer.", pedal);
-    return;
-  }
-
-  const button = pedalForm.querySelector("button");
-  button.disabled = true;
-  pedalNote.className = "request__note";
-  pedalNote.textContent = "Sending…";
-
-  try {
-    const res = await fetch(pedalForm.action.replace("formsubmit.co/", "formsubmit.co/ajax/"), {
-      method: "POST",
-      headers: { "Content-Type": "application/json", Accept: "application/json" },
-      body: JSON.stringify(data),
-    });
-    const json = await res.json().catch(() => ({}));
-    if (res.ok && String(json.success) === "true") {
-      showPedalThanks(pedal, Boolean(data.email));
-    } else if (/activat/i.test(json.message || "")) {
-      // First ever submission: FormSubmit emails the site owner an activation link.
-      pedalNote.className = "request__note";
-      pedalNote.textContent =
-        "Almost there: the form is waiting to be activated. Check samuelwan04@gmail.com for FormSubmit's activation email, click the link, then send this again.";
-    } else {
-      console.warn("FormSubmit:", res.status, json.message);
-      pedalFallback("That didn't go through. Try again in a moment.", pedal);
+  const showThanks = (data) => {
+    const done = document.createElement("div");
+    done.className = "request__done";
+    done.setAttribute("role", "status");
+    done.innerHTML =
+      '<svg viewBox="0 0 44 44" fill="none" stroke-width="2" aria-hidden="true"><circle cx="22" cy="22" r="20"/><path d="M13 22.5l6 6 12-13" stroke-linecap="round" stroke-linejoin="round"/></svg><div><strong></strong><p></p></div>';
+    done.querySelector("strong").textContent = type.title;
+    done.querySelector("p").textContent = type.message(data);
+    if (type.again) {
+      const again = document.createElement("button");
+      again.type = "button";
+      again.textContent = type.again;
+      again.addEventListener("click", () => {
+        form.reset();
+        note.textContent = "";
+        form.replaceChildren(...fields);
+        form.querySelector("input:not([type=hidden]):not(.honey)").focus();
+      });
+      done.querySelector("div").append(again);
     }
-  } catch (err) {
-    console.warn("FormSubmit:", err);
-    pedalFallback("That didn't go through. Check your connection and try again.", pedal);
-  } finally {
-    button.disabled = false;
-  }
-});
+    form.replaceChildren(done);
+  };
 
-function showPedalThanks(pedal, hasEmail) {
-  const done = document.createElement("div");
-  done.className = "request__done";
-  done.innerHTML =
-    '<svg viewBox="0 0 44 44" fill="none" stroke-width="2" aria-hidden="true"><circle cx="22" cy="22" r="20"/><path d="M13 22.5l6 6 12-13" stroke-linecap="round" stroke-linejoin="round"/></svg><div><strong></strong><p></p><button type="button">Request another one</button></div>';
-  done.querySelector("strong").textContent = "Got it, thanks!";
-  done.querySelector("p").textContent = hasEmail
-    ? `${pedal} is on our list. We'll email you when it works with Midiator.`
-    : `${pedal} is on our list. Check back soon.`;
-  done.setAttribute("role", "status");
-  done.querySelector("button").addEventListener("click", () => {
-    pedalForm.reset();
-    pedalNote.textContent = "";
-    pedalForm.replaceChildren(...pedalFields);
-    pedalForm.querySelector("input[name=pedal]").focus();
+  form.addEventListener("submit", async (e) => {
+    e.preventDefault();
+    if ([...form.querySelectorAll("[required]")].some((input) => !input.value.trim())) return;
+    const data = Object.fromEntries(
+      [...new FormData(form)].map(([k, v]) => [k, typeof v === "string" ? v.trim() : v])
+    );
+    const subject = type.subject(data);
+    data._subject = subject;
+
+    // FormSubmit rejects pages opened straight from disk (file://), so say so instead of failing.
+    if (location.protocol === "file:") {
+      fallback("This form only sends once the site is online, not when the file is opened from your computer.", subject);
+      return;
+    }
+
+    const button = form.querySelector("button[type=submit]");
+    button.disabled = true;
+    note.className = "request__note";
+    note.textContent = "Sending…";
+
+    try {
+      const res = await fetch(form.action.replace("formsubmit.co/", "formsubmit.co/ajax/"), {
+        method: "POST",
+        headers: { "Content-Type": "application/json", Accept: "application/json" },
+        body: JSON.stringify(data),
+      });
+      const json = await res.json().catch(() => ({}));
+      if (res.ok && String(json.success) === "true") {
+        showThanks(data);
+      } else if (/activat/i.test(json.message || "")) {
+        // First submission from a new web address: FormSubmit emails the site owner an activation link.
+        note.className = "request__note";
+        note.textContent =
+          "Almost there: the form is waiting to be activated. Check samuelwan04@gmail.com for FormSubmit's activation email, click the link, then send this again.";
+      } else {
+        console.warn("FormSubmit:", res.status, json.message);
+        fallback("That didn't go through. Try again in a moment.", subject);
+      }
+    } catch (err) {
+      console.warn("FormSubmit:", err);
+      fallback("That didn't go through. Check your connection and try again.", subject);
+    } finally {
+      button.disabled = false;
+    }
   });
-  pedalForm.replaceChildren(done);
 }
+
+document.querySelectorAll("form[data-form]").forEach(wireForm);
