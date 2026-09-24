@@ -888,6 +888,7 @@ a, button, summary, .pill { cursor: var(--cur-hover, pointer); }
 }
 .level--full { color: var(--green); border: 1px solid rgba(171, 255, 132, .4); }
 .level--part { color: var(--muted); border: 1px solid var(--line); }
+.level--soon { color: var(--brand-2); border: 1px solid rgba(242, 84, 45, .45); }
 
 /* pedal request */
 .request {
