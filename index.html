@@ -25,7 +25,7 @@
 <body>
 
   <div class="banner">
-    <p>Midiator is in early access for macOS &middot; <a href="#access">Get on the list</a></p>
+    <p>Midiator is out now for macOS &middot; <a href="#download">Download it free</a></p>
   </div>
 
   <header class="nav" id="top">
@@ -43,7 +43,7 @@
         <a href="#safety">Safety</a>
         <a href="#gear">Gear</a>
         <a href="#faq">FAQ</a>
-        <a class="pill pill--cta" href="#access">Get early access</a>
+        <a class="pill pill--cta" href="#download">Download for Mac</a>
       </nav>
     </div>
     <div class="progress" aria-hidden="true"></div>
@@ -89,7 +89,7 @@
           <p class="bracket">{ The MIDI mediator for guitarists }</p>
           <p class="lede">Midiator sits between you and your rig. It turns the presets you've already dialed in into one Morningstar bank per song, with tempo, tap and footswitch layout, then writes it straight to your controller.</p>
           <div class="actions">
-            <a class="pill pill--cta" href="#access">Get early access</a>
+            <a class="pill pill--cta" href="#download">Download for Mac</a>
             <a class="pill" href="#how">See how it works</a>
           </div>
         </div>
@@ -369,18 +369,49 @@
           <p>Yes, that's the point. Midiator remembers what it wrote, so next week's setlist can reuse those banks. It updates what changed, clears switches the new song doesn't use, and leaves your own presets alone.</p>
         </details>
         <details class="reveal">
+          <summary>Why does my Mac ask me to confirm the first time I open it?</summary>
+          <p>Midiator isn't registered with Apple yet, so macOS can't vouch for it and asks you to confirm once. Right-click it in Applications and choose Open. After that it opens like any other app, and updates install from inside Midiator.</p>
+        </details>
+        <details class="reveal">
           <summary>Windows?</summary>
           <p>macOS comes first. Windows is on the list.</p>
         </details>
       </div>
     </section>
 
-    <!-- CTA -->
-    <section class="cta" id="access">
+    <!-- Download -->
+    <section class="cta" id="download">
       <div class="wrap">
-        <p class="bracket reveal">{ Early access }</p>
+        <p class="bracket reveal">{ Download }</p>
         <h2 class="display display--cta" data-split="chars">Play the <em class="grad">set.</em></h2>
-        <p class="body-lg cta__lede reveal">Midiator is in early access for macOS. Leave your email and what's on your board, and we'll let you know when your build is ready.</p>
+        <p class="body-lg cta__lede reveal">Free for macOS. One download for Macs with an Apple chip or an Intel processor.</p>
+        <div class="download reveal">
+          <a class="pill pill--cta pill--lg" data-download href="https://github.com/samuelwan04-rgb/midiator/releases/latest">
+            <svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 4v11m0 0-4.5-4.5M12 15l4.5-4.5M5 19.5h14"/></svg>
+            Download for Mac
+          </a>
+          <p class="download__meta">Free &middot; Apple chip and Intel</p>
+        </div>
+
+        <ol class="install">
+          <li class="install__step reveal">
+            <span class="install__n">1</span>
+            <p><strong>Drag Midiator into Applications.</strong> Open the downloaded file and drag the icon across.</p>
+          </li>
+          <li class="install__step reveal" style="--d:.12s">
+            <span class="install__n">2</span>
+            <p><strong>Right-click Midiator, then Open.</strong> The first time, macOS asks you to confirm, since Midiator isn't registered with Apple yet. Click Open.</p>
+          </li>
+          <li class="install__step reveal" style="--d:.24s">
+            <span class="install__n">3</span>
+            <p><strong>No Open button?</strong> On newer macOS, go to System Settings &rarr; Privacy &amp; Security and click Open Anyway.</p>
+          </li>
+        </ol>
+        <p class="install__note reveal">After that it opens like any app, and new versions install themselves from inside Midiator.</p>
+
+        <div class="keep-posted" id="access">
+          <h3 class="reveal">Want to hear what's new?</h3>
+          <p class="reveal">Leave your email and what's on your board. We'll let you know when new gear and features land.</p>
         <form class="signup reveal" id="access-form" data-form="access" action="https://formsubmit.co/60afdc30fe21cc4e77c1851438efd4df" method="POST">
           <div class="signup__grid">
             <label class="field">
@@ -399,9 +430,10 @@
           <input type="text" name="_honey" class="honey" tabindex="-1" autocomplete="off" aria-hidden="true">
           <input type="hidden" name="_template" value="table">
           <input type="hidden" name="_captcha" value="false">
-          <button class="pill pill--cta pill--lg" type="submit">Request early access</button>
+          <button class="pill" type="submit">Keep me posted</button>
           <p class="request__note" role="status" aria-live="polite"></p>
         </form>
+        </div>
       </div>
     </section>
 
@@ -427,7 +459,7 @@
           <p class="footer__h">Help</p>
           <a href="#safety">Safety</a>
           <a href="#faq">FAQ</a>
-          <a href="#access">Early access</a>
+          <a href="#download">Download</a>
         </div>
       </div>
     </div>

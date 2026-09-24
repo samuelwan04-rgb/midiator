@@ -530,9 +530,9 @@ const formTypes = {
     again: "Request another one",
   },
   access: {
-    subject: (d) => `Midiator early access: ${d.email}`,
+    subject: (d) => `Midiator sign-up: ${d.email}`,
     title: "You're on the list!",
-    message: (d) => `We'll email ${d.email} when your build is ready.`,
+    message: (d) => `We'll email ${d.email} when there's something new.`,
   },
 };
 
@@ -617,3 +617,20 @@ function wireForm(form) {
 }
 
 document.querySelectorAll("form[data-form]").forEach(wireForm);
+
+// ---------- Download ----------
+// Point the download button at the newest release's .dmg; without it (offline, rate-limited)
+// the button keeps linking to the latest release page, which has the same file.
+fetch("https://api.github.com/repos/samuelwan04-rgb/midiator/releases/latest", {
+  headers: { Accept: "application/vnd.github+json" },
+})
+  .then((res) => (res.ok ? res.json() : Promise.reject(res.status)))
+  .then((release) => {
+    const dmg = release.assets.find((a) => a.name.endsWith(".dmg"));
+    if (!dmg) return;
+    document.querySelectorAll("[data-download]").forEach((a) => (a.href = dmg.browser_download_url));
+    const version = release.tag_name.replace(/^v/, "");
+    document.querySelector(".download__meta").textContent =
+      `Version ${version} · ${Math.round(dmg.size / 1e6)} MB · Apple chip and Intel`;
+  })
+  .catch(() => {});
