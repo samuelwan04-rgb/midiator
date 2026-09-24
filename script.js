@@ -187,6 +187,82 @@ if (!reduceMotion && finePointer) {
   });
 }
 
+// ---------- Pedal cursors ----------
+// Cartoon pedals loosely inspired by the gear list: colors and shapes only,
+// no names, logos or real layouts.
+const pedals = [
+  { body: "#5b6170", wide: 1, screen: 1, knobs: 2, sw: 4, knob: "#c9ccd3" }, // big modeler
+  { body: "#34363f", wide: 1, screen: 1, knobs: 3, sw: 3, knob: "#9aa0ab" }, // small modeler
+  { body: "#7fb2e5", wide: 1, screen: 1, knobs: 4, sw: 3, knob: "#f4f6fa" }, // blue delay
+  { body: "#b9a4ff", wide: 1, screen: 1, knobs: 4, sw: 3, knob: "#f4f6fa" }, // purple reverb
+  { body: "#8fe3b0", wide: 1, screen: 1, knobs: 4, sw: 3, knob: "#f4f6fa" }, // green modulation
+  { body: "#44444c", wide: 1, screen: 1, knobs: 3, sw: 3, knob: "#ff9a6a" }, // multi-effect
+  { body: "#f1eee4", wide: 1, screen: 1, knobs: 4, sw: 3, knob: "#44464d" }, // white delay
+  { body: "#6ec6ff", wide: 1, screen: 1, knobs: 4, sw: 3, knob: "#26303b" }, // sky reverb
+  { body: "#ffb0c8", wide: 1, screen: 1, knobs: 4, sw: 3, knob: "#3b2a33" }, // pink modulation
+  { body: "#d9dde3", wide: 1, screen: 0, knobs: 4, sw: 3, knob: "#ff8a5c" }, // silver delay
+  { body: "#c8ccd2", wide: 1, screen: 0, knobs: 4, sw: 3, knob: "#5aa9ff" }, // silver reverb
+  { body: "#ece6d8", wide: 1, screen: 1, knobs: 4, sw: 3, knob: "#8a7f6a" }, // cream delay
+  { body: "#23252b", wide: 1, screen: 1, knobs: 4, sw: 3, knob: "#e7e1cf" }, // black reverb
+  { body: "#3f4652", wide: 1, screen: 0, knobs: 4, sw: 2, knob: "#ffd36e" }, // slate stereo
+  { body: "#f5d76e", wide: 0, screen: 0, knobs: 3, sw: 2, knob: "#2e2a1f" }, // yellow stomp delay
+  { body: "#ff9e7a", wide: 0, screen: 0, knobs: 3, sw: 2, knob: "#2e2a1f" }, // coral stomp reverb
+  { body: "#ffd6f0", wide: 1, screen: 0, knobs: 4, sw: 2, knob: "#9d95ff" }, // pastel looper
+  { body: "#ffe08a", wide: 1, screen: 0, knobs: 4, sw: 2, knob: "#ff6b6b" }, // sunny multi
+];
+
+function pedalSvg(p, happy) {
+  const ink = "#15171a";
+  const [x, y, w, h] = p.wide ? [3, 5, 27, 21] : [3, 3, 20, 27];
+  const cx = x + w / 2;
+  const knobY = y + 4.5;
+  const faceY = y + h / 2 + (p.wide ? 0.5 : 0);
+  const swY = y + h - 4;
+  const row = (n, pad) =>
+    Array.from({ length: n }, (_, i) => x + pad + ((w - pad * 2) * (i + 0.5)) / n);
+
+  const knobs = row(p.knobs, 2)
+    .map((kx) => `<circle cx="${kx}" cy="${knobY}" r="1.9" fill="${p.knob}" stroke="${ink}" stroke-width=".6"/>`)
+    .join("");
+  const switches = row(p.sw, 3)
+    .map((sx) => `<circle cx="${sx}" cy="${swY}" r="1.9" fill="${happy ? "#fffce1" : "#cfcfc6"}" stroke="${ink}" stroke-width=".6"/>`)
+    .join("");
+
+  const faceInk = p.screen ? "#abff84" : ink;
+  const eyes = happy
+    ? `<path d="M${cx - 4} ${faceY - 0.4} q1 -1.6 2 0 M${cx + 2} ${faceY - 0.4} q1 -1.6 2 0" fill="none" stroke="${faceInk}" stroke-width=".9" stroke-linecap="round"/>`
+    : `<circle cx="${cx - 3}" cy="${faceY - 0.8}" r="1.05" fill="${faceInk}"/><circle cx="${cx + 3}" cy="${faceY - 0.8}" r="1.05" fill="${faceInk}"/>`;
+  const smile = `<path d="M${cx - 1.6} ${faceY + 1.1} q1.6 1.5 3.2 0" fill="none" stroke="${faceInk}" stroke-width=".9" stroke-linecap="round"/>`;
+  const screen = p.screen
+    ? `<rect x="${cx - 6.5}" y="${faceY - 3.4}" width="13" height="6.6" rx="1.4" fill="#10160f" stroke="${ink}" stroke-width=".5"/>`
+    : `<circle cx="${cx - 5.6}" cy="${faceY + 0.9}" r="1.1" fill="#ff7aa8" opacity=".55"/><circle cx="${cx + 5.6}" cy="${faceY + 0.9}" r="1.1" fill="#ff7aa8" opacity=".55"/>`;
+  const led = `<circle cx="${x + w - 3}" cy="${swY - 3.6}" r=".95" fill="${happy ? "#ff3b2f" : "#5a2a22"}"/>`;
+
+  return `<svg xmlns="http://www.w3.org/2000/svg" width="32" height="32" viewBox="0 0 32 32">` +
+    `<rect x="${x}" y="${y}" width="${w}" height="${h}" rx="3.5" fill="${p.body}" stroke="#fffce1" stroke-width="1.2"/>` +
+    knobs + screen + eyes + smile + led + switches +
+    `<path d="M1 1 L8.5 3.2 L3.2 8.5 Z" fill="#fffce1" stroke="${ink}" stroke-width=".8" stroke-linejoin="round"/>` +
+    `</svg>`;
+}
+
+const cursorUrl = (svg) => `url("data:image/svg+xml,${encodeURIComponent(svg)}") 1 1`;
+let pedalIndex = Math.floor(Math.random() * pedals.length);
+
+function usePedal(i) {
+  const p = pedals[i];
+  root.style.setProperty("--cur", `${cursorUrl(pedalSvg(p, false))}, auto`);
+  root.style.setProperty("--cur-hover", `${cursorUrl(pedalSvg(p, true))}, pointer`);
+}
+
+if (finePointer) {
+  usePedal(pedalIndex);
+  // a new pedal on every click
+  window.addEventListener("pointerdown", () => {
+    pedalIndex = (pedalIndex + 1 + Math.floor(Math.random() * (pedals.length - 1))) % pedals.length;
+    usePedal(pedalIndex);
+  });
+}
+
 // ---------- Hero controller ----------
 const sections = [
   "BigSky 04A · TimeLine off",
@@ -322,6 +398,8 @@ scene(songsEl, null, async (wait) => {
   const cursor = songsEl.querySelector(".cursor");
   const chips = [...songsEl.querySelectorAll("[data-bank]")];
   const box = songsEl.getBoundingClientRect();
+  const pedal = pedals[Math.floor(Math.random() * pedals.length)];
+  cursor.innerHTML = pedalSvg(pedal, false);
   cursor.style.transform = `translate(${box.width * 0.35}px, ${box.height + 20}px)`;
   cursor.classList.add("show");
   await wait(300);
@@ -332,6 +410,8 @@ scene(songsEl, null, async (wait) => {
     cursor.style.transform = `translate(${r.left - b.left + r.width * 0.5}px, ${r.top - b.top + r.height * 0.4}px)`;
     await wait(950);
     restart(cursor, "click");
+    cursor.innerHTML = pedalSvg(pedal, true);
+    setTimeout(() => (cursor.innerHTML = pedalSvg(pedal, false)), 500);
     chip.className = "chip c-lilac-bg";
     chip.textContent = `In setlist · bank ${chip.dataset.bank}`;
     restart(chip, "pop");

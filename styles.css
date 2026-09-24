@@ -206,7 +206,7 @@ code { font-family: var(--mono); font-size: 0.85em; }
   border: 0;
   border-radius: 50%;
   background: transparent;
-  cursor: pointer;
+  cursor: var(--cur-hover, pointer);
   position: relative;
 }
 .nav__toggle span {
@@ -580,11 +580,8 @@ code { font-family: var(--mono); font-size: 0.85em; }
   position: absolute;
   top: 0;
   left: 0;
-  width: 22px;
-  height: 22px;
-  fill: var(--cream);
-  stroke: var(--bg);
-  stroke-width: 1.5;
+  width: 32px;
+  height: 32px;
   opacity: 0;
   pointer-events: none;
   transition: transform .8s var(--ease), opacity .3s;
@@ -592,6 +589,11 @@ code { font-family: var(--mono); font-size: 0.85em; }
 .cursor.show { opacity: 1; }
 .cursor.click { animation: click .3s ease; }
 @keyframes click { 50% { scale: .8; } }
+.cursor svg { display: block; width: 100%; height: 100%; }
+
+/* site-wide pedal cursor, set from script.js on mouse devices */
+html { cursor: var(--cur, auto); }
+a, button, summary, .pill { cursor: var(--cur-hover, pointer); }
 
 /* presets */
 .thead, .trow {
@@ -899,7 +901,7 @@ code { font-family: var(--mono); font-size: 0.85em; }
 .faq details:last-child { border-bottom: 1px solid var(--line); }
 .faq summary {
   list-style: none;
-  cursor: pointer;
+  cursor: var(--cur-hover, pointer);
   display: flex;
   justify-content: space-between;
   align-items: center;
