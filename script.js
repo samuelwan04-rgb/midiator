@@ -523,12 +523,27 @@ const pedalForm = document.getElementById("pedal-form");
 const pedalNote = pedalForm.querySelector(".request__note");
 const pedalFields = [...pedalForm.children];
 
+function pedalFallback(message, pedal) {
+  pedalNote.className = "request__note error";
+  pedalNote.textContent = `${message} You can also email `;
+  const mail = document.createElement("a");
+  mail.href = `mailto:samuelwan04@gmail.com?subject=${encodeURIComponent(`Midiator gear request: ${pedal}`)}`;
+  mail.textContent = "samuelwan04@gmail.com";
+  pedalNote.append(mail, ".");
+}
+
 pedalForm.addEventListener("submit", async (e) => {
   e.preventDefault();
   const data = Object.fromEntries(new FormData(pedalForm));
   const pedal = data.pedal.trim();
   if (!pedal) return;
-  data._subject = `Midiator pedal request: ${pedal}`;
+  data._subject = `Midiator gear request: ${pedal}`;
+
+  // FormSubmit rejects pages opened straight from disk (file://), so say so instead of failing.
+  if (location.protocol === "file:") {
+    pedalFallback("This form only sends once the site is online, not when the file is opened from your computer.", pedal);
+    return;
+  }
 
   const button = pedalForm.querySelector("button");
   button.disabled = true;
@@ -542,15 +557,20 @@ pedalForm.addEventListener("submit", async (e) => {
       body: JSON.stringify(data),
     });
     const json = await res.json().catch(() => ({}));
-    if (!res.ok || String(json.success) !== "true") throw new Error(json.message || res.status);
-    showPedalThanks(pedal, Boolean(data.email));
-  } catch {
-    pedalNote.className = "request__note error";
-    pedalNote.textContent = "That didn't go through. Try again, or email ";
-    const mail = document.createElement("a");
-    mail.href = `mailto:samuelwan04@gmail.com?subject=${encodeURIComponent(`Midiator pedal request: ${pedal}`)}`;
-    mail.textContent = "samuelwan04@gmail.com";
-    pedalNote.append(mail, ".");
+    if (res.ok && String(json.success) === "true") {
+      showPedalThanks(pedal, Boolean(data.email));
+    } else if (/activat/i.test(json.message || "")) {
+      // First ever submission: FormSubmit emails the site owner an activation link.
+      pedalNote.className = "request__note";
+      pedalNote.textContent =
+        "Almost there: the form is waiting to be activated. Check samuelwan04@gmail.com for FormSubmit's activation email, click the link, then send this again.";
+    } else {
+      console.warn("FormSubmit:", res.status, json.message);
+      pedalFallback("That didn't go through. Try again in a moment.", pedal);
+    }
+  } catch (err) {
+    console.warn("FormSubmit:", err);
+    pedalFallback("That didn't go through. Check your connection and try again.", pedal);
   } finally {
     button.disabled = false;
   }
@@ -560,7 +580,7 @@ function showPedalThanks(pedal, hasEmail) {
   const done = document.createElement("div");
   done.className = "request__done";
   done.innerHTML =
-    '<svg viewBox="0 0 44 44" fill="none" stroke-width="2" aria-hidden="true"><circle cx="22" cy="22" r="20"/><path d="M13 22.5l6 6 12-13" stroke-linecap="round" stroke-linejoin="round"/></svg><div><strong></strong><p></p><button type="button">Request another pedal</button></div>';
+    '<svg viewBox="0 0 44 44" fill="none" stroke-width="2" aria-hidden="true"><circle cx="22" cy="22" r="20"/><path d="M13 22.5l6 6 12-13" stroke-linecap="round" stroke-linejoin="round"/></svg><div><strong></strong><p></p><button type="button">Request another one</button></div>';
   done.querySelector("strong").textContent = "Got it, thanks!";
   done.querySelector("p").textContent = hasEmail
     ? `${pedal} is on our list. We'll email you when it works with Midiator.`
