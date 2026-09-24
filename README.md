@@ -21,6 +21,10 @@ then go to http://localhost:8000.
 
 On GitHub, open the repo's **Settings → Pages**, set **Source** to "Deploy from a branch", choose `main` and `/ (root)`, and save. The site appears at `https://<your-username>.github.io/midiator/` after a minute or two.
 
+## After changing styles.css or script.js
+
+Raise the `?v=` number on both lines that load them in `index.html` (e.g. `styles.css?v=6` -> `?v=7`). Browsers keep old copies of these files for a while, and a new number makes them fetch the new ones.
+
 ## Download button
 
 The **Download for Mac** buttons jump to the Download section, whose button asks GitHub for the newest release of this repo and links straight to its `.dmg`. Releases are published here by the app repo's Release workflow, so the site needs no change for a new version. If GitHub can't be reached, the button links to the latest release page instead.
