@@ -20,7 +20,7 @@
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Geist:wght@400;500;600;700&family=Geist+Mono:wght@400;500&display=swap" rel="stylesheet">
-  <link rel="stylesheet" href="styles.css?v=7">
+  <link rel="stylesheet" href="styles.css?v=8">
 </head>
 <body>
 
@@ -281,80 +281,72 @@
       <div class="wrap">
         <p class="bracket reveal">{ Works with }</p>
         <h2 class="heading" data-split>Your board, not a generic one.</h2>
-        <p class="body-lg gear__intro reveal">Midiator knows each pedal's real MIDI map, taken from its manual. Here's where support stands today.</p>
+        <p class="body-lg gear__intro reveal">Midiator knows each device's real MIDI map, taken from its manual. Here's where support stands today, brand by brand.</p>
+
+        <div class="gear__legend reveal">
+          <p><span class="level level--full">Full support</span> Tested on real hardware.</p>
+          <p><span class="level level--part">Supported (beta)</span> Built from the maker's MIDI manual, not yet tested on hardware.</p>
+        </div>
 
         <div class="gear__grid">
-          <div class="gcard reveal">
-            <p class="gcard__kind">Controller</p>
-            <h3>Morningstar MC6 mkII</h3>
-            <p>Read and write, tested on hardware.</p>
-            <span class="level level--full">Full support</span>
+          <div class="brand-card reveal">
+            <h3>Morningstar</h3>
+            <ul>
+              <li><span class="dev"><span class="dev__name">MC6 mkII</span><span class="dev__kind">Controller · read and write</span></span><span class="level level--full">Full support</span></li>
+              <li><span class="dev"><span class="dev__name">MC3, MC6 Pro, MC8, MC8 Pro</span><span class="dev__kind">Controllers · read now, writing once verified</span></span><span class="level level--part">Supported (beta)</span></li>
+            </ul>
           </div>
-          <div class="gcard reveal">
-            <p class="gcard__kind">Controllers</p>
-            <h3>MC3, MC6 Pro, MC8, MC8 Pro</h3>
-            <p>Read and plan now. Writing unlocks per model once verified.</p>
-            <span class="level level--part">In progress</span>
+          <div class="brand-card reveal">
+            <h3>Strymon</h3>
+            <ul>
+              <li><span class="dev"><span class="dev__name">TimeLine</span><span class="dev__kind">Delay · recall past PC 127, clock sync</span></span><span class="level level--full">Full support</span></li>
+              <li><span class="dev"><span class="dev__name">BigSky</span><span class="dev__kind">Reverb · recall past PC 127</span></span><span class="level level--full">Full support</span></li>
+              <li><span class="dev"><span class="dev__name">Mobius</span><span class="dev__kind">Modulation</span><span class="brand__soon">next update</span></span><span class="level level--part">Supported (beta)</span></li>
+            </ul>
           </div>
-          <div class="gcard reveal">
-            <p class="gcard__kind">Delay &middot; Reverb</p>
-            <h3>Strymon TimeLine &amp; BigSky</h3>
-            <p>Preset recall past 127, MIDI clock sync, engage.</p>
-            <span class="level level--full">Full support</span>
+          <div class="brand-card reveal">
+            <h3>Meris</h3>
+            <ul>
+              <li><span class="dev"><span class="dev__name">LVX</span><span class="dev__kind">Delay · preset recall, clock follow</span></span><span class="level level--part">Supported (beta)</span></li>
+              <li><span class="dev"><span class="dev__name">MercuryX</span><span class="dev__kind">Reverb · preset recall, clock follow</span></span><span class="level level--part">Supported (beta)</span></li>
+              <li><span class="dev"><span class="dev__name">Enzo X</span><span class="dev__kind">Synth</span><span class="brand__soon">next update</span></span><span class="level level--part">Supported (beta)</span></li>
+            </ul>
           </div>
-          <div class="gcard reveal">
-            <p class="gcard__kind">Delay &middot; Reverb</p>
-            <h3>Meris LVX &amp; MercuryX</h3>
-            <p>Preset recall and clock follow.</p>
-            <span class="level level--full">Supported</span>
+          <div class="brand-card reveal">
+            <h3>Neural DSP</h3>
+            <ul>
+              <li><span class="dev"><span class="dev__name">Quad Cortex</span><span class="dev__kind">Modeler · preset and scene recall</span></span><span class="level level--part">Supported (beta)</span></li>
+            </ul>
           </div>
-          <div class="gcard reveal">
-            <p class="gcard__kind">Modeler</p>
-            <h3>Neural DSP Quad Cortex</h3>
-            <p>Preset and scene recall by bank and letter.</p>
-            <span class="level level--part">Beta</span>
+          <div class="brand-card reveal">
+            <h3>Line 6</h3>
+            <ul>
+              <li><span class="dev"><span class="dev__name">HX Stomp</span><span class="dev__kind">Multi-effect · as a pedal on your board</span><span class="brand__soon">next update</span></span><span class="level level--part">Supported (beta)</span></li>
+            </ul>
           </div>
-          <div class="gcard reveal">
-            <p class="gcard__kind">Multi-effect</p>
-            <h3>Eventide H90</h3>
-            <p>Program recall by number. Mappings are yours to set.</p>
-            <span class="level level--part">Beta</span>
+          <div class="brand-card reveal">
+            <h3>Eventide</h3>
+            <ul>
+              <li><span class="dev"><span class="dev__name">H90</span><span class="dev__kind">Multi-effect · program recall, your own mappings</span></span><span class="level level--part">Supported (beta)</span></li>
+            </ul>
           </div>
-          <div class="gcard reveal">
-            <p class="gcard__kind">Controller</p>
-            <h3>M-VAVE Chocolate</h3>
-            <p>Setlists for the compact four-switch controller.</p>
-            <span class="level level--soon">Next update</span>
+          <div class="brand-card reveal">
+            <h3>Walrus Audio</h3>
+            <ul>
+              <li><span class="dev"><span class="dev__name">Mako series</span><span class="dev__kind">Delay, reverb and modulation</span><span class="brand__soon">next update</span></span><span class="level level--part">Supported (beta)</span></li>
+            </ul>
           </div>
-          <div class="gcard reveal">
-            <p class="gcard__kind">Controllers</p>
+          <div class="brand-card reveal">
             <h3>Pirate MIDI</h3>
-            <p>The Pirate MIDI controller range.</p>
-            <span class="level level--soon">Next update</span>
+            <ul>
+              <li><span class="dev"><span class="dev__name">Controller range</span><span class="dev__kind">Controllers</span><span class="brand__soon">next update</span></span><span class="level level--part">Supported (beta)</span></li>
+            </ul>
           </div>
-          <div class="gcard reveal">
-            <p class="gcard__kind">Multi-effect</p>
-            <h3>Line 6 HX Stomp</h3>
-            <p>Preset recall, as a pedal on your board.</p>
-            <span class="level level--soon">Next update</span>
-          </div>
-          <div class="gcard reveal">
-            <p class="gcard__kind">Modulation</p>
-            <h3>Strymon Mobius</h3>
-            <p>Preset recall, alongside the TimeLine and BigSky.</p>
-            <span class="level level--soon">Next update</span>
-          </div>
-          <div class="gcard reveal">
-            <p class="gcard__kind">Synth</p>
-            <h3>Meris Enzo X</h3>
-            <p>Preset recall.</p>
-            <span class="level level--soon">Next update</span>
-          </div>
-          <div class="gcard reveal">
-            <p class="gcard__kind">Delay &middot; Reverb &middot; Modulation</p>
-            <h3>Walrus Audio Mako series</h3>
-            <p>Preset recall across the whole Mako line.</p>
-            <span class="level level--soon">Next update</span>
+          <div class="brand-card reveal">
+            <h3>M-VAVE</h3>
+            <ul>
+              <li><span class="dev"><span class="dev__name">Chocolate</span><span class="dev__kind">Controller · four switches</span><span class="brand__soon">next update</span></span><span class="level level--part">Supported (beta)</span></li>
+            </ul>
           </div>
         </div>
 
@@ -504,6 +496,6 @@
     </div>
   </footer>
 
-  <script src="script.js?v=7"></script>
+  <script src="script.js?v=8"></script>
 </body>
 </html>
