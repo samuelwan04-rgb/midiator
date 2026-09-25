@@ -20,7 +20,7 @@
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Geist:wght@400;500;600;700&family=Geist+Mono:wght@400;500&display=swap" rel="stylesheet">
-  <link rel="stylesheet" href="styles.css?v=8">
+  <link rel="stylesheet" href="styles.css?v=9">
 </head>
 <body>
 
@@ -202,24 +202,25 @@
 
       <article class="feature">
         <div class="feature__art reveal reveal--wipe">
-          <div class="mock mock--chat" data-scene="chat">
-            <div class="bubble bubble--me"><span class="type">Dotted eighth for the chorus, three repeats, a bit darker.</span></div>
-            <div class="dots"><i></i><i></i><i></i></div>
-            <div class="bubble bubble--ai">
-              <span>TimeLine &middot; Digital</span>
-              <div class="chips">
-                <code>Time &rarr; dotted 8th</code>
-                <code>Repeats 3</code>
-                <code>Filter &minus;20%</code>
-              </div>
-              <span class="audition"><span class="bars"><i></i><i></i><i></i><i></i></span>Audition live</span>
+          <div class="mock mock--scan" data-scene="scan">
+            <div class="scan__head">
+              <strong>Scan controller</strong>
+              <span class="scan__status">Found 4 pedal presets, 1 already in My presets.</span>
             </div>
+            <div class="scan__bar"><span></span></div>
+            <ul class="scan__rows">
+              <li><span class="scan__check" aria-hidden="true"></span><span class="scan__dev"><strong>TimeLine 12B</strong><span>Clean verse</span></span><code>Bank 1 &middot; A</code></li>
+              <li><span class="scan__check" aria-hidden="true"></span><span class="scan__dev"><strong>BigSky 71C</strong><span>Big chorus</span></span><code>Bank 1 &middot; B</code></li>
+              <li class="is-known"><span class="scan__check" aria-hidden="true"></span><span class="scan__dev"><strong>BigSky 04A</strong><span>Worship Swell &middot; have it</span></span><code>Bank 1 &middot; A</code></li>
+              <li><span class="scan__check" aria-hidden="true"></span><span class="scan__dev"><strong>Quad Cortex 3B</strong><span>Ambient wash</span></span><code>Bank 3 &middot; H</code></li>
+            </ul>
+            <span class="scan__add">Add 3 to My presets</span>
           </div>
         </div>
         <div class="feature__copy">
-          <p class="label c-blue reveal">Tone lab</p>
-          <h3 class="subheading" data-split>Describe a sound when you need a new one.</h3>
-          <p class="body-lg reveal">Tone lab uses Claude and real device profiles to suggest settings from plain language, then lets you audition them on your rig. Auditioning only changes the live sound. It never saves over a preset.</p>
+          <p class="label c-blue reveal">Scan controller</p>
+          <h3 class="subheading" data-split>Already programmed your board? Midiator reads it.</h3>
+          <p class="body-lg reveal">Scan your Morningstar and Midiator finds the pedal presets your own controller presets call up, works out each one's bank and slot, and lets you pick which to add to My presets. It only reads: nothing on the controller changes.</p>
         </div>
       </article>
     </section>
@@ -386,7 +387,7 @@
         </details>
         <details class="reveal">
           <summary>Do I need to use the AI?</summary>
-          <p>No. The main workflow, Setlists, Songs and My presets, is exact MIDI math with no AI involved. Tone lab is an optional extra for when you want help finding a new sound, and it needs your own Anthropic API key.</p>
+          <p>No. Setlists, Songs, My presets and Scan controller are exact MIDI math with no AI involved. Tone lab, an experimental helper for finding new sounds, is optional and needs your own Anthropic API key.</p>
         </details>
         <details class="reveal">
           <summary>What do I need to get started?</summary>
@@ -496,6 +497,6 @@
     </div>
   </footer>
 
-  <script src="script.js?v=8"></script>
+  <script src="script.js?v=9"></script>
 </body>
 </html>

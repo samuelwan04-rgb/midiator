@@ -474,39 +474,41 @@ scene(presetsEl, null, async (wait) => {
   await wait(600);
 });
 
-// Tone lab: type a request, wait for a reply, audition it.
-const chatEl = document.querySelector('[data-scene="chat"]');
-scene(
-  chatEl,
-  () => {
-    chatEl.querySelector(".type").textContent = "";
-  },
-  async (wait) => {
-    const typed = chatEl.querySelector(".type");
-    const dots = chatEl.querySelector(".dots");
-    const ai = chatEl.querySelector(".bubble--ai");
-    const audition = chatEl.querySelector(".audition");
+// Scan controller: count through the banks, find presets, tick them, add them.
+const scanEl = document.querySelector('[data-scene="scan"]');
+scene(scanEl, null, async (wait) => {
+  const status = scanEl.querySelector(".scan__status");
+  const bar = scanEl.querySelector(".scan__bar span");
+  const rows = [...scanEl.querySelectorAll(".scan__rows li")];
+  const add = scanEl.querySelector(".scan__add");
+  const foundAt = [1, 1, 1, 3];
 
-    chatEl.classList.remove("fade");
-    typed.classList.add("caret");
-    await typeInto(typed, "Dotted eighth for the chorus, three repeats, a bit darker.", wait);
-    typed.classList.remove("caret");
-    await wait(400);
-    dots.classList.add("show");
-    await wait(1300);
-    dots.classList.remove("show");
-    ai.classList.add("show");
-    await wait(1400);
-    audition.classList.add("playing");
-    await wait(2800);
-    audition.classList.remove("playing");
-    await wait(1200);
-    chatEl.classList.add("fade");
-    await wait(500);
-    ai.classList.remove("show");
-    typed.textContent = "";
+  rows.forEach((r) => r.classList.remove("show", "ticked"));
+  add.classList.remove("ready", "done");
+  add.textContent = "Add 3 to My presets";
+  for (let bank = 1; bank <= 30; bank += bank < 6 ? 1 : 4) {
+    status.textContent = `Reading bank ${bank} of 30…`;
+    bar.style.transform = `scaleX(${bank / 30})`;
+    rows.forEach((r, i) => foundAt[i] <= bank && r.classList.add("show"));
+    await wait(bank < 6 ? 420 : 160);
   }
-);
+  bar.style.transform = "scaleX(1)";
+  rows.forEach((r) => r.classList.add("show"));
+  status.textContent = "Found 4 pedal presets, 1 already in My presets.";
+  await wait(600);
+  for (const row of rows.filter((r) => !r.classList.contains("is-known"))) {
+    row.classList.add("ticked");
+    await wait(280);
+  }
+  add.classList.add("ready");
+  await wait(900);
+  add.classList.add("press");
+  await wait(160);
+  add.classList.remove("press");
+  add.classList.add("done");
+  add.textContent = "✓ Added 3 to My presets";
+  await wait(2600);
+});
 
 // Safety: the review fills in row by row, then writes and verifies.
 const reviewEl = document.querySelector('[data-scene="review"]');
