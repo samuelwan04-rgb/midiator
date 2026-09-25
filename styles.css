@@ -828,7 +828,7 @@ a, button, summary, .pill { cursor: var(--cur-hover, pointer); }
   color: var(--muted);
   font-size: 15px;
 }
-.gear__legend p { display: flex; align-items: center; gap: 10px; }
+.gear__legend p { display: flex; align-items: center; gap: 10px; margin: 0; }
 .brand-card {
   background:
     radial-gradient(360px circle at var(--mx, -400px) var(--my, -400px), rgba(242, 84, 45, .16), transparent 60%),
@@ -849,7 +849,8 @@ a, button, summary, .pill { cursor: var(--cur-hover, pointer); }
 .dev { display: flex; flex-direction: column; gap: 3px; min-width: 0; }
 .dev__name { color: var(--cream); font-size: 17px; font-weight: 500; }
 .dev__kind { color: var(--muted); font-size: 14px; line-height: 1.35; }
-.brand__soon { font-family: var(--mono); font-size: 12px; color: var(--brand-2); }
+.gear__sheet { flex-basis: 100%; }
+.gear__sheet strong { font-family: var(--mono); font-size: 12px; font-weight: 500; color: var(--cream); border: 1px dashed var(--line); padding: 3px 10px; border-radius: 100px; flex: none; }
 .level {
   flex: none;
   white-space: nowrap;

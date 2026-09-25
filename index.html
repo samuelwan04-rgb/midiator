@@ -20,7 +20,7 @@
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Geist:wght@400;500;600;700&family=Geist+Mono:wght@400;500&display=swap" rel="stylesheet">
-  <link rel="stylesheet" href="styles.css?v=9">
+  <link rel="stylesheet" href="styles.css?v=10">
 </head>
 <body>
 
@@ -99,8 +99,8 @@
     <!-- Gear marquee -->
     <div class="marquee" aria-hidden="true">
       <div class="marquee__track">
-        <span>Morningstar MC6 mkII</span><i></i><span>Strymon TimeLine</span><i></i><span>Strymon BigSky</span><i></i><span>Strymon Mobius</span><i></i><span>Meris LVX</span><i></i><span>Meris MercuryX</span><i></i><span>Meris Enzo X</span><i></i><span>Neural DSP Quad Cortex</span><i></i><span>Line 6 HX Stomp</span><i></i><span>Eventide H90</span><i></i><span>Walrus Audio Mako</span><i></i><span>Pirate MIDI</span><i></i><span>M-VAVE Chocolate</span><i></i>
-        <span>Morningstar MC6 mkII</span><i></i><span>Strymon TimeLine</span><i></i><span>Strymon BigSky</span><i></i><span>Strymon Mobius</span><i></i><span>Meris LVX</span><i></i><span>Meris MercuryX</span><i></i><span>Meris Enzo X</span><i></i><span>Neural DSP Quad Cortex</span><i></i><span>Line 6 HX Stomp</span><i></i><span>Eventide H90</span><i></i><span>Walrus Audio Mako</span><i></i><span>Pirate MIDI</span><i></i><span>M-VAVE Chocolate</span><i></i>
+        <span>Morningstar MC6 mkII</span><i></i><span>Strymon TimeLine</span><i></i><span>Strymon BigSky</span><i></i><span>Strymon Mobius</span><i></i><span>Meris LVX</span><i></i><span>Meris MercuryX</span><i></i><span>Meris Enzo X</span><i></i><span>Neural DSP Quad Cortex</span><i></i><span>Line 6 HX Stomp</span><i></i><span>Eventide H90</span><i></i><span>Walrus Audio Mako</span><i></i><span>Pirate MIDI Bridge6</span><i></i><span>Strymon TimeLine MX</span><i></i><span>Strymon BigSky MX</span><i></i><span>Line 6 HX Stomp XL</span><i></i><span>Neural DSP Nano Cortex</span><i></i><span>Boss ES-5</span><i></i><span>RJM Mastermind</span><i></i><span>JET Unity6</span><i></i><span>M-VAVE Chocolate</span><i></i>
+        <span>Morningstar MC6 mkII</span><i></i><span>Strymon TimeLine</span><i></i><span>Strymon BigSky</span><i></i><span>Strymon Mobius</span><i></i><span>Meris LVX</span><i></i><span>Meris MercuryX</span><i></i><span>Meris Enzo X</span><i></i><span>Neural DSP Quad Cortex</span><i></i><span>Line 6 HX Stomp</span><i></i><span>Eventide H90</span><i></i><span>Walrus Audio Mako</span><i></i><span>Pirate MIDI Bridge6</span><i></i><span>Strymon TimeLine MX</span><i></i><span>Strymon BigSky MX</span><i></i><span>Line 6 HX Stomp XL</span><i></i><span>Neural DSP Nano Cortex</span><i></i><span>Boss ES-5</span><i></i><span>RJM Mastermind</span><i></i><span>JET Unity6</span><i></i><span>M-VAVE Chocolate</span><i></i>
       </div>
     </div>
 
@@ -287,6 +287,7 @@
         <div class="gear__legend reveal">
           <p><span class="level level--full">Full support</span> Tested on real hardware.</p>
           <p><span class="level level--part">Supported (beta)</span> Built from the maker's MIDI manual, not yet tested on hardware.</p>
+          <p class="gear__sheet"><strong>Setup sheet</strong> Some controllers can only be programmed from their own editor. Midiator still lays out every song, then shows exactly what to enter on each switch.</p>
         </div>
 
         <div class="gear__grid">
@@ -298,11 +299,18 @@
             </ul>
           </div>
           <div class="brand-card reveal">
+            <h3>Pirate MIDI</h3>
+            <ul>
+              <li><span class="dev"><span class="dev__name">Bridge6, Bridge4, Aero</span><span class="dev__kind">Controllers · write over USB, read back after every write</span></span><span class="level level--part">Supported (beta)</span></li>
+            </ul>
+          </div>
+          <div class="brand-card reveal">
             <h3>Strymon</h3>
             <ul>
               <li><span class="dev"><span class="dev__name">TimeLine</span><span class="dev__kind">Delay · recall past PC 127, clock sync</span></span><span class="level level--full">Full support</span></li>
               <li><span class="dev"><span class="dev__name">BigSky</span><span class="dev__kind">Reverb · recall past PC 127</span></span><span class="level level--full">Full support</span></li>
-              <li><span class="dev"><span class="dev__name">Mobius</span><span class="dev__kind">Modulation</span><span class="brand__soon">next update</span></span><span class="level level--part">Supported (beta)</span></li>
+              <li><span class="dev"><span class="dev__name">TimeLine MX, BigSky MX</span><span class="dev__kind">Delay and reverb · preset recall</span></span><span class="level level--part">Supported (beta)</span></li>
+              <li><span class="dev"><span class="dev__name">Mobius</span><span class="dev__kind">Modulation · preset recall</span></span><span class="level level--part">Supported (beta)</span></li>
             </ul>
           </div>
           <div class="brand-card reveal">
@@ -310,19 +318,26 @@
             <ul>
               <li><span class="dev"><span class="dev__name">LVX</span><span class="dev__kind">Delay · preset recall, clock follow</span></span><span class="level level--part">Supported (beta)</span></li>
               <li><span class="dev"><span class="dev__name">MercuryX</span><span class="dev__kind">Reverb · preset recall, clock follow</span></span><span class="level level--part">Supported (beta)</span></li>
-              <li><span class="dev"><span class="dev__name">Enzo X</span><span class="dev__kind">Synth</span><span class="brand__soon">next update</span></span><span class="level level--part">Supported (beta)</span></li>
+              <li><span class="dev"><span class="dev__name">Enzo X</span><span class="dev__kind">Synth · preset recall</span></span><span class="level level--part">Supported (beta)</span></li>
+            </ul>
+          </div>
+          <div class="brand-card reveal">
+            <h3>Line 6</h3>
+            <ul>
+              <li><span class="dev"><span class="dev__name">HX Stomp, HX Stomp XL</span><span class="dev__kind">Multi-effect · preset and snapshot recall</span></span><span class="level level--part">Supported (beta)</span></li>
             </ul>
           </div>
           <div class="brand-card reveal">
             <h3>Neural DSP</h3>
             <ul>
               <li><span class="dev"><span class="dev__name">Quad Cortex</span><span class="dev__kind">Modeler · preset and scene recall</span></span><span class="level level--part">Supported (beta)</span></li>
+              <li><span class="dev"><span class="dev__name">Nano Cortex</span><span class="dev__kind">Amp modeler · preset recall</span></span><span class="level level--part">Supported (beta)</span></li>
             </ul>
           </div>
           <div class="brand-card reveal">
-            <h3>Line 6</h3>
+            <h3>Walrus Audio</h3>
             <ul>
-              <li><span class="dev"><span class="dev__name">HX Stomp</span><span class="dev__kind">Multi-effect · as a pedal on your board</span><span class="brand__soon">next update</span></span><span class="level level--part">Supported (beta)</span></li>
+              <li><span class="dev"><span class="dev__name">Mako D1, R1, M1, ACS1</span><span class="dev__kind">Delay, reverb, modulation, amp · MkI and MkII</span></span><span class="level level--part">Supported (beta)</span></li>
             </ul>
           </div>
           <div class="brand-card reveal">
@@ -332,21 +347,27 @@
             </ul>
           </div>
           <div class="brand-card reveal">
-            <h3>Walrus Audio</h3>
+            <h3>Boss</h3>
             <ul>
-              <li><span class="dev"><span class="dev__name">Mako series</span><span class="dev__kind">Delay, reverb and modulation</span><span class="brand__soon">next update</span></span><span class="level level--part">Supported (beta)</span></li>
+              <li><span class="dev"><span class="dev__name">ES-5, MS-3</span><span class="dev__kind">Switchers · setup sheet, in Patch MIDI slots</span></span><span class="level level--part">Supported (beta)</span></li>
             </ul>
           </div>
           <div class="brand-card reveal">
-            <h3>Pirate MIDI</h3>
+            <h3>RJM</h3>
             <ul>
-              <li><span class="dev"><span class="dev__name">Controller range</span><span class="dev__kind">Controllers</span><span class="brand__soon">next update</span></span><span class="level level--part">Supported (beta)</span></li>
+              <li><span class="dev"><span class="dev__name">Mastermind PBC/10, PBC/6X</span><span class="dev__kind">Switchers · setup sheet</span></span><span class="level level--part">Supported (beta)</span></li>
+            </ul>
+          </div>
+          <div class="brand-card reveal">
+            <h3>JET Pedals</h3>
+            <ul>
+              <li><span class="dev"><span class="dev__name">Unity6, with U6 Trio</span><span class="dev__kind">Controller and expander · setup sheet</span></span><span class="level level--part">Supported (beta)</span></li>
             </ul>
           </div>
           <div class="brand-card reveal">
             <h3>M-VAVE</h3>
             <ul>
-              <li><span class="dev"><span class="dev__name">Chocolate</span><span class="dev__kind">Controller · four switches</span><span class="brand__soon">next update</span></span><span class="level level--part">Supported (beta)</span></li>
+              <li><span class="dev"><span class="dev__name">Chocolate, Chocolate Plus</span><span class="dev__kind">Controllers · setup sheet</span></span><span class="level level--part">Supported (beta)</span></li>
             </ul>
           </div>
         </div>
@@ -497,6 +518,6 @@
     </div>
   </footer>
 
-  <script src="script.js?v=9"></script>
+  <script src="script.js?v=10"></script>
 </body>
 </html>
