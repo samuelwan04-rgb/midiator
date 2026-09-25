@@ -1044,6 +1044,10 @@ a, button, summary, .pill { cursor: var(--cur-hover, pointer); }
 .keep-posted { border-top: 1px solid var(--line); padding-top: clamp(40px, 5vw, 56px); }
 .keep-posted h3 { font-size: clamp(24px, 2.4vw, 32px); font-weight: 600; letter-spacing: -0.02em; margin-bottom: 10px; }
 .keep-posted > p { color: var(--muted); margin-bottom: 28px; max-width: 46ch; }
+.contact { border-top: 1px solid var(--line); padding-block: clamp(48px, 6vw, 80px); }
+.contact h3 { font-size: clamp(24px, 2.4vw, 32px); font-weight: 600; letter-spacing: -0.02em; margin: 12px 0 10px; }
+.contact > p:not(.bracket) { color: var(--muted); margin-bottom: 28px; max-width: 46ch; }
+.contact .pill { overflow-wrap: anywhere; }
 
 /* ---------- Footer ---------- */
 .footer {

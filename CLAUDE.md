@@ -32,8 +32,10 @@ experience.
 ## Forms
 
 Two forms (early-access sign-up and "Pedal or MIDI controller not on the list?") post to
-FormSubmit at `https://formsubmit.co/ajax/60afdc30fe21cc4e77c1851438efd4df`. That alias hides
-Sam's Gmail; **never put the real address in the page.** Forms can't send from a `file://` page.
+FormSubmit at `https://formsubmit.co/midiatorplanet@gmail.com` (Midiator's public address, also in
+the Contact section and footer with Instagram @midiatorplanet). **Never put Sam's personal email in
+the page.** FormSubmit needs a one-time activation: the first submission emails an activate link to
+that inbox. Forms can't send from a `file://` page.
 
 ## Brand
 

@@ -31,7 +31,7 @@ The **Download for Mac** buttons jump to the Download section, whose button asks
 
 ## Email
 
-Both forms deliver to Sam's Gmail. The page only contains FormSubmit's random alias for that address (`60afdc30…` in the two `action=` lines in `index.html`), so the address itself isn't public.
+Both forms deliver to Midiator's public address, **midiatorplanet@gmail.com** (the two `action=` lines in `index.html`). It's also shown in the Contact section with Instagram **@midiatorplanet**. Sam's personal email must never appear on the site.
 
 Both forms on the site send through [FormSubmit](https://formsubmit.co), a free form-to-email service:
 
@@ -40,4 +40,4 @@ Both forms on the site send through [FormSubmit](https://formsubmit.co), a free 
 
 **One-time setup:** the very first request sends a "confirm your form" email to that Gmail inbox. Click the activate link in it, and every request after that arrives in your inbox. Send yourself a test request once the site is live to trigger it. The form can't send from a page opened by double-clicking `index.html`; it needs the online site (or `python3 -m http.server`).
 
-To send to a different address, replace the alias in both `action=` lines with the new address, then use the alias FormSubmit gives you for it.
+To send to a different address, replace the address in both `action=` lines (and the Contact section and footer).

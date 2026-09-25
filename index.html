@@ -4,12 +4,12 @@
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <title>Midiator — MIDI, mediated.</title>
-  <meta name="description" content="Midiator turns the pedal presets you've already dialed in into one Morningstar bank per song, with tempo, tap and footswitch layout, and writes it to your controller without touching anything you made by hand.">
+  <meta name="description" content="Midiator turns the pedal presets you've already dialed in into one controller bank per song, with tempo and footswitch layout. It writes to Morningstar and Pirate MIDI controllers without touching anything you made by hand, and gives you a setup sheet for Boss, RJM, JET and M-VAVE.">
   <meta name="theme-color" content="#0e100f">
   <meta property="og:type" content="website">
   <meta property="og:site_name" content="Midiator">
   <meta property="og:title" content="Midiator — MIDI, mediated.">
-  <meta property="og:description" content="Turn the pedal presets you've already dialed in into one Morningstar bank per song, with tempo and tap, written straight to your controller.">
+  <meta property="og:description" content="Turn the pedal presets you've already dialed in into one controller bank per song, with tempo and tap, ready for your footswitches.">
   <meta property="og:url" content="https://samuelwan04-rgb.github.io/midiator/">
   <meta property="og:image" content="https://samuelwan04-rgb.github.io/midiator/assets/og-image.png?v=2">
   <meta property="og:image:width" content="1200">
@@ -20,7 +20,7 @@
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Geist:wght@400;500;600;700&family=Geist+Mono:wght@400;500&display=swap" rel="stylesheet">
-  <link rel="stylesheet" href="styles.css?v=10">
+  <link rel="stylesheet" href="styles.css?v=11">
 </head>
 <body>
 
@@ -43,6 +43,7 @@
         <a href="#safety">Safety</a>
         <a href="#gear">Gear</a>
         <a href="#faq">FAQ</a>
+        <a href="#contact">Contact</a>
         <a class="pill pill--cta" href="#download">Download for Mac</a>
       </nav>
     </div>
@@ -87,7 +88,7 @@
 
         <div class="hero__foot">
           <p class="bracket">{ The MIDI mediator for guitarists }</p>
-          <p class="lede">Midiator sits between you and your rig. It turns the presets you've already dialed in into one Morningstar bank per song, with tempo, tap and footswitch layout, then writes it straight to your controller.</p>
+          <p class="lede">Midiator sits between you and your rig. It turns the presets you've already dialed in into one bank per song on your MIDI controller, with tempo, tap and footswitch layout. It writes straight to a Morningstar or Pirate MIDI controller, and gives you a simple setup sheet for Boss, RJM, JET and M-VAVE.</p>
           <div class="actions">
             <a class="pill pill--cta" href="#download">Download for Mac</a>
             <a class="pill" href="#how">See how it works</a>
@@ -377,7 +378,7 @@
             <h3>Pedal or MIDI controller not on the list?</h3>
             <p>Tell us what's on your board. We'll dig into the MIDI manual and add it to Midiator.</p>
           </div>
-          <form class="request__form" id="pedal-form" data-form="gear" action="https://formsubmit.co/60afdc30fe21cc4e77c1851438efd4df" method="POST">
+          <form class="request__form" id="pedal-form" data-form="gear" action="https://formsubmit.co/midiatorplanet@gmail.com" method="POST">
             <label class="field">
               <span>Your pedal or MIDI controller</span>
               <input type="text" name="pedal" placeholder="e.g. Chase Bliss Blooper or Boss ES-8" required maxlength="120" autocomplete="off">
@@ -404,15 +405,15 @@
       <div class="faq__list">
         <details class="reveal">
           <summary>Does Midiator change the presets saved on my pedals?</summary>
-          <p>No. It only recalls presets and makes live edits you can hear. It never sends a save command to a pedal. The only thing it writes is your Morningstar controller's presets, and only the ones it made itself or empty ones.</p>
+          <p>No. It only recalls presets and makes live edits you can hear. It never sends a save command to a pedal. The only thing it writes is your controller's presets (Morningstar or Pirate MIDI), and only the ones it made itself or empty ones.</p>
         </details>
         <details class="reveal">
           <summary>Do I need to use the AI?</summary>
-          <p>No. Setlists, Songs, My presets and Scan controller are exact MIDI math with no AI involved. Tone lab, an experimental helper for finding new sounds, is optional and needs your own Anthropic API key.</p>
+          <p>No. Setlists, Songs, My presets and Scan controller are exact MIDI math with no AI involved. Labs, an experimental helper for finding new sounds, is optional and needs your own Anthropic API key.</p>
         </details>
         <details class="reveal">
           <summary>What do I need to get started?</summary>
-          <p>A Mac, a Morningstar controller connected over USB, and your pedals connected to it by MIDI. Turn on MIDI Thru in the controller's settings so Midiator can reach your pedals.</p>
+          <p>A Mac, a MIDI controller and your pedals connected to it by MIDI. Midiator writes to a Morningstar or Pirate MIDI controller over USB (turn on MIDI Thru in its settings so Midiator can reach your pedals too). For Boss, RJM, JET and M-VAVE controllers it gives you a setup sheet to copy in.</p>
         </details>
         <details class="reveal">
           <summary>Can I reuse the same banks every week?</summary>
@@ -462,7 +463,7 @@
         <div class="keep-posted" id="access">
           <h3 class="reveal">Want to hear what's new?</h3>
           <p class="reveal">Leave your email and what's on your board. We'll let you know when new gear and features land.</p>
-        <form class="signup reveal" id="access-form" data-form="access" action="https://formsubmit.co/60afdc30fe21cc4e77c1851438efd4df" method="POST">
+        <form class="signup reveal" id="access-form" data-form="access" action="https://formsubmit.co/midiatorplanet@gmail.com" method="POST">
           <div class="signup__grid">
             <label class="field">
               <span>Your email</span>
@@ -484,6 +485,17 @@
           <p class="request__note" role="status" aria-live="polite"></p>
         </form>
         </div>
+      </div>
+    </section>
+
+    <!-- Contact -->
+    <section class="wrap contact" id="contact">
+      <p class="bracket reveal">{ Contact us }</p>
+      <h3 class="reveal">Questions, ideas, or a rig to show off?</h3>
+      <p class="reveal">We'd love to hear from you. Email us or say hi on Instagram.</p>
+      <div class="actions reveal">
+        <a class="pill" href="mailto:midiatorplanet@gmail.com">midiatorplanet@gmail.com</a>
+        <a class="pill" href="https://www.instagram.com/midiatorplanet/" target="_blank" rel="noopener">@midiatorplanet on Instagram</a>
       </div>
     </section>
 
@@ -511,6 +523,11 @@
           <a href="#faq">FAQ</a>
           <a href="#download">Download</a>
         </div>
+        <div>
+          <p class="footer__h">Contact</p>
+          <a href="mailto:midiatorplanet@gmail.com">Email</a>
+          <a href="https://www.instagram.com/midiatorplanet/" target="_blank" rel="noopener">Instagram</a>
+        </div>
       </div>
     </div>
     <div class="wrap footer__legal">
@@ -518,6 +535,6 @@
     </div>
   </footer>
 
-  <script src="script.js?v=10"></script>
+  <script src="script.js?v=11"></script>
 </body>
 </html>
