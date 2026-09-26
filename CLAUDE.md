@@ -12,7 +12,7 @@ experience.
 - Plain `index.html` + `styles.css` + `script.js`, no build step. Hosted on GitHub Pages from
   `main` at https://samuelwan04-rgb.github.io/midiator/. Merging a PR into `main` publishes it.
 - **Cache numbers:** after changing `styles.css` or `script.js`, raise `?v=N` on both lines that
-  load them in `index.html` (currently 12). Otherwise browsers keep showing the old files.
+  load them in `index.html` (currently 13). Otherwise browsers keep showing the old files.
 - Animations use GSAP-style scroll reveals (`.reveal`), split headings (`data-split`) and the
   braces/glint heading effect. Keep motion subtle; Sam asked not to overdo it.
 - The share preview is `assets/og-image.png` (1200×630, tagline "Setlists, settled."). Raise its
