@@ -657,3 +657,26 @@ fetch("https://api.github.com/repos/samuelwan04-rgb/midiator/releases/latest", {
       `Version ${version} · ${Math.round(dmg.size / 1e6)} MB · Apple chip and Intel`;
   })
   .catch(() => {});
+
+// ---------- Performance ----------
+// Pause looping decoration (drifting glows, marquee, bobbing MC6) while it's off screen.
+if ("IntersectionObserver" in window) {
+  const decor = new IntersectionObserver((entries) => {
+    entries.forEach((e) => e.target.classList.toggle("is-offscreen", !e.isIntersecting));
+  });
+  document.querySelectorAll(".hero, .marquee, .mock").forEach((el) => decor.observe(el));
+}
+
+// Tutorial video: pause it when it's scrolled away, and turn off the menu's
+// live blur while it plays (re-blurring every video frame is what made scrolling heavy).
+const demo = document.querySelector(".demo__video");
+if (demo) {
+  const setPlaying = () => document.body.classList.toggle("video-playing", !demo.paused && !demo.ended);
+  ["play", "pause", "ended"].forEach((t) => demo.addEventListener(t, setPlaying));
+  if ("IntersectionObserver" in window) {
+    new IntersectionObserver(
+      ([e]) => { if (!e.isIntersecting && !demo.paused) demo.pause(); },
+      { threshold: 0.25 }
+    ).observe(demo);
+  }
+}
