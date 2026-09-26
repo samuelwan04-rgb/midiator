@@ -1149,3 +1149,8 @@ a, button, summary, .pill { cursor: var(--cur-hover, pointer); }
 @media (prefers-reduced-motion: reduce) {
   .request__done svg path { stroke-dashoffset: 0; }
 }
+
+/* Tutorial video under How it works */
+.demo { margin: clamp(48px, 7vw, 88px) 0 0; }
+.demo__video { display: block; width: 100%; height: auto; aspect-ratio: 16 / 9; border-radius: 16px; border: 1px solid var(--line); background: #0e100f; }
+.demo figcaption { margin-top: 14px; color: var(--muted); font-size: 15px; text-align: center; }
