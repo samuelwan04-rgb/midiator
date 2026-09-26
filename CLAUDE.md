@@ -31,11 +31,11 @@ experience.
 
 ## Tutorial video
 
-`assets/midiator-tutorial.mp4` (38 s, 1080p60, ~5 MB) plays under the How it works steps, with
-`assets/tutorial-poster.jpg` as its still. The project that rendered the video is gone; this copy
-is the original with its repeated (stuttering) frames removed and blended back to 60 fps
-(ffmpeg `mpdecimate` + `minterpolate=mi_mode=blend`; motion-compensated mode smeared the text).
-Raise the `?v=` on both when replacing them. It still says "Send to the MC6".
+`assets/midiator-tutorial.mp4` (38.6 s, 1080p60, ~4 MB) plays under the How it works steps, with
+`assets/tutorial-poster.jpg` as its still. It's rendered from the real app screens by
+`tools/tutorial-video/` in the app repo (`sh tools/tutorial-video/make.sh`, which also makes a 4K
+copy). Re-render it when the app's screens change, copy the 1080p file and poster here, and raise
+the `?v=` on both in `index.html`.
 
 ## Forms
 
