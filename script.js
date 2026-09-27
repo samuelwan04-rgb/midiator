@@ -232,41 +232,50 @@ const pedals = [
   { body: "#ffe08a", wide: 1, screen: 0, knobs: 4, sw: 2, knob: "#ff6b6b" }, // sunny multi
 ];
 
+// 8-bit pedals: each variant drawn on a 16x16 pixel grid (shown at 32x32), with a pixel arrow at
+// the top-left corner where the click lands. "happy" = hovering something clickable: the eyes
+// smile, the footswitches light up and the LED turns red.
 function pedalSvg(p, happy) {
   const ink = "#15171a";
-  const [x, y, w, h] = p.wide ? [3, 5, 27, 21] : [3, 3, 20, 27];
-  const cx = x + w / 2;
-  const knobY = y + 4.5;
-  const faceY = y + h / 2 + (p.wide ? 0.5 : 0);
-  const swY = y + h - 4;
-  const row = (n, pad) =>
-    Array.from({ length: n }, (_, i) => x + pad + ((w - pad * 2) * (i + 0.5)) / n);
-
-  const knobs = row(p.knobs, 2)
-    .map((kx) => `<circle cx="${kx}" cy="${knobY}" r="1.9" fill="${p.knob}" stroke="${ink}" stroke-width=".6"/>`)
-    .join("");
-  const switches = row(p.sw, 3)
-    .map((sx) => `<circle cx="${sx}" cy="${swY}" r="1.9" fill="${happy ? "#fffce1" : "#cfcfc6"}" stroke="${ink}" stroke-width=".6"/>`)
-    .join("");
-
+  const cream = "#fffce1";
+  const px = [];
+  const dot = (x, y, c) => px.push(`<rect x="${x}" y="${y}" width="1" height="1" fill="${c}"/>`);
+  const box = (x, y, w, h, c) => px.push(`<rect x="${x}" y="${y}" width="${w}" height="${h}" fill="${c}"/>`);
+  // Body with a cream outline and a darker bottom edge.
+  const [x, y, w, h] = p.wide ? [2, 4, 13, 11] : [4, 2, 10, 13];
+  box(x, y, w, h, cream);
+  box(x + 1, y + 1, w - 2, h - 2, p.body);
+  box(x + 1, y + h - 2, w - 2, 1, "rgba(0,0,0,.25)");
+  // Knobs along the top.
+  const spread = (n, pad) => Array.from({ length: n }, (_, i) => Math.round(x + pad + ((w - 1 - pad * 2) * (i + 0.5)) / n));
+  spread(p.knobs, 2).forEach((kx) => dot(kx, y + 2, p.knob));
+  // Face (on a little screen for the modelers).
+  const cx = Math.floor(x + w / 2);
+  const fy = y + Math.floor(h / 2);
   const faceInk = p.screen ? "#abff84" : ink;
-  const eyes = happy
-    ? `<path d="M${cx - 4} ${faceY - 0.4} q1 -1.6 2 0 M${cx + 2} ${faceY - 0.4} q1 -1.6 2 0" fill="none" stroke="${faceInk}" stroke-width=".9" stroke-linecap="round"/>`
-    : `<circle cx="${cx - 3}" cy="${faceY - 0.8}" r="1.05" fill="${faceInk}"/><circle cx="${cx + 3}" cy="${faceY - 0.8}" r="1.05" fill="${faceInk}"/>`;
-  const smile = `<path d="M${cx - 1.6} ${faceY + 1.1} q1.6 1.5 3.2 0" fill="none" stroke="${faceInk}" stroke-width=".9" stroke-linecap="round"/>`;
-  const screen = p.screen
-    ? `<rect x="${cx - 6.5}" y="${faceY - 3.4}" width="13" height="6.6" rx="1.4" fill="#10160f" stroke="${ink}" stroke-width=".5"/>`
-    : `<circle cx="${cx - 5.6}" cy="${faceY + 0.9}" r="1.1" fill="#ff7aa8" opacity=".55"/><circle cx="${cx + 5.6}" cy="${faceY + 0.9}" r="1.1" fill="#ff7aa8" opacity=".55"/>`;
-  const led = `<circle cx="${x + w - 3}" cy="${swY - 3.6}" r=".95" fill="${happy ? "#ff3b2f" : "#5a2a22"}"/>`;
-
-  return `<svg xmlns="http://www.w3.org/2000/svg" width="32" height="32" viewBox="0 0 32 32">` +
-    `<rect x="${x}" y="${y}" width="${w}" height="${h}" rx="3.5" fill="${p.body}" stroke="#fffce1" stroke-width="1.2"/>` +
-    knobs + screen + eyes + smile + led + switches +
-    `<path d="M1 1 L8.5 3.2 L3.2 8.5 Z" fill="#fffce1" stroke="${ink}" stroke-width=".8" stroke-linejoin="round"/>` +
-    `</svg>`;
+  if (p.screen) box(cx - 3, fy - 2, 6, 4, "#10160f");
+  if (happy) {
+    for (const ex of [cx - 2, cx + 1]) { dot(ex - 1, fy - 1, faceInk); dot(ex, fy - 2, faceInk); dot(ex + 1, fy - 1, faceInk); }
+  } else {
+    dot(cx - 2, fy - 1, faceInk);
+    dot(cx + 1, fy - 1, faceInk);
+  }
+  dot(cx - 1, fy + 1, faceInk);
+  dot(cx, fy + 1, faceInk);
+  if (!p.screen) { dot(cx - 3, fy, "#ff7aa8"); dot(cx + 2, fy, "#ff7aa8"); }
+  // LED and footswitches.
+  dot(x + w - 3, y + h - 5, happy ? "#ff3b2f" : "#5a2a22");
+  spread(p.sw, 2).forEach((sx) => dot(sx, y + h - 3, happy ? cream : "#8d8d84"));
+  // Pixel arrow: the hotspot is its top-left pixel.
+  [[0, 0], [1, 0], [2, 0], [3, 0], [0, 1], [1, 1], [2, 1], [0, 2], [1, 2], [0, 3]].forEach(([ax, ay]) => dot(ax, ay, cream));
+  [[4, 0], [3, 1], [2, 2], [1, 3], [0, 4]].forEach(([ax, ay]) => dot(ax, ay, ink));
+  return `<svg xmlns="http://www.w3.org/2000/svg" width="32" height="32" viewBox="0 0 16 16" shape-rendering="crispEdges">${px.join("")}</svg>`;
 }
+// The simulator (simulator.js) draws its pedals with the same pixel art.
+window.midiatorPixelPedal = pedalSvg;
+window.midiatorPedals = pedals;
 
-const cursorUrl = (svg) => `url("data:image/svg+xml,${encodeURIComponent(svg)}") 1 1`;
+const cursorUrl = (svg) => `url("data:image/svg+xml,${encodeURIComponent(svg)}") 0 0`;
 let pedalIndex = Math.floor(Math.random() * pedals.length);
 
 function usePedal(i) {
