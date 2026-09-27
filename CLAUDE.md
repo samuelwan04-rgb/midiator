@@ -12,7 +12,7 @@ experience.
 - Plain `index.html` + `styles.css` + `script.js`, no build step. Hosted on GitHub Pages from
   `main` at https://samuelwan04-rgb.github.io/midiator/. Merging a PR into `main` publishes it.
 - **Cache numbers:** after changing `styles.css` or `script.js`, raise `?v=N` on both lines that
-  load them in `index.html` (currently 14; simulator.css/js have their own, currently 1). Otherwise browsers keep showing the old files.
+  load them in `index.html` (currently 14; simulator.css/js have their own, currently 2). Otherwise browsers keep showing the old files.
 - Animations use GSAP-style scroll reveals (`.reveal`), split headings (`data-split`) and the
   braces/glint heading effect. Keep motion subtle; Sam asked not to overdo it.
 - The share preview is `assets/og-image.png` (1200×630, tagline "Setlists, settled."). Raise its
@@ -40,11 +40,14 @@ the `?v=` on both in `index.html`.
 ## Simulator ("Try it", #try)
 
 `simulator.js` + `simulator.css` (their own `?v=` numbers), section `#try` after How it works. A
-playable 8-bit game: pick your pedals (5 of 7 generic ones, 10 made-up preset names each), press
-Start, and for each of 18 song parts (4 songs, 4-5 parts) pick which sound each pedal plays; the
-clock counts up against a 10:00 bar and the finish screen shows the time, a recap, Download,
-Share my time (navigator.share or copy) and Play again. Pixel font: Press Start 2P (Google Fonts,
-OFL), only inside the simulator. Brief: Sam's `midiator-simulator.md` (2026-09-27).
+working copy of the app's Setlists screen in dark mode (window frame, top bar, "This week", song
+cards with the MC6 2x3 grid, the section editor with one preset dropdown per pedal), using the app's
+own dark colour tokens scoped under `.app-window`. A "Your pedalboard" dialog picks the pedals (5 of
+7 generic ones, 10 made-up presets each) and starts the clock with the only 8-bit element, the START
+button (Press Start 2P, Google Fonts OFL). Done moves to the next part without sounds; "Send 4 songs
+to MC6" enables once all 18 parts have one and stops the clock; the finish dialog shows the time,
+"Try it now: Download for Mac", Share my time and Play again. Sam's brief: `midiator-simulator.md`;
+2026-09-27 he asked for the app look with only the Start button 8-bit ("if it's bad, scrap it").
 
 The site cursor is now 8-bit: `pedalSvg()` in script.js draws each pedal on a 16x16 grid (shown at
 32x32, hotspot 0 0), still changing on every click; the simulator reuses it through
