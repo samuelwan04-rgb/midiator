@@ -12,7 +12,7 @@ experience.
 - Plain `index.html` + `styles.css` + `script.js`, no build step. Hosted on GitHub Pages from
   `main` at https://samuelwan04-rgb.github.io/midiator/. Merging a PR into `main` publishes it.
 - **Cache numbers:** after changing `styles.css` or `script.js`, raise `?v=N` on both lines that
-  load them in `index.html` (currently 13). Otherwise browsers keep showing the old files.
+  load them in `index.html` (currently 14; simulator.css/js have their own, currently 1). Otherwise browsers keep showing the old files.
 - Animations use GSAP-style scroll reveals (`.reveal`), split headings (`data-split`) and the
   braces/glint heading effect. Keep motion subtle; Sam asked not to overdo it.
 - The share preview is `assets/og-image.png` (1200×630, tagline "Setlists, settled."). Raise its
@@ -36,6 +36,19 @@ experience.
 `tools/tutorial-video/` in the app repo (`sh tools/tutorial-video/make.sh`, which also makes a 4K
 copy). Re-render it when the app's screens change, copy the 1080p file and poster here, and raise
 the `?v=` on both in `index.html`.
+
+## Simulator ("Try it", #try)
+
+`simulator.js` + `simulator.css` (their own `?v=` numbers), section `#try` after How it works. A
+playable 8-bit game: pick your pedals (5 of 7 generic ones, 10 made-up preset names each), press
+Start, and for each of 18 song parts (4 songs, 4-5 parts) pick which sound each pedal plays; the
+clock counts up against a 10:00 bar and the finish screen shows the time, a recap, Download,
+Share my time (navigator.share or copy) and Play again. Pixel font: Press Start 2P (Google Fonts,
+OFL), only inside the simulator. Brief: Sam's `midiator-simulator.md` (2026-09-27).
+
+The site cursor is now 8-bit: `pedalSvg()` in script.js draws each pedal on a 16x16 grid (shown at
+32x32, hotspot 0 0), still changing on every click; the simulator reuses it through
+`window.midiatorPixelPedal` / `window.midiatorPedals`, so script.js must load first.
 
 ## Forms
 

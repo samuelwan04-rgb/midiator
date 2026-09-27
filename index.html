@@ -19,8 +19,9 @@
   <link rel="icon" href="assets/midiator-mark.svg" type="image/svg+xml">
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link href="https://fonts.googleapis.com/css2?family=Geist:wght@400;500;600;700&family=Geist+Mono:wght@400;500&display=swap" rel="stylesheet">
-  <link rel="stylesheet" href="styles.css?v=13">
+  <link href="https://fonts.googleapis.com/css2?family=Geist:wght@400;500;600;700&family=Geist+Mono:wght@400;500&family=Press+Start+2P&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="styles.css?v=14">
+  <link rel="stylesheet" href="simulator.css?v=1">
 </head>
 <body>
 
@@ -40,6 +41,7 @@
       <nav class="nav__links" id="nav-links">
         <a href="#features">Features</a>
         <a href="#how">How it works</a>
+        <a href="#try">Try it</a>
         <a href="#safety">Safety</a>
         <a href="#gear">Gear</a>
         <a href="#faq">FAQ</a>
@@ -255,6 +257,16 @@
           </video>
           <figcaption>Midiator in 40 seconds: find your presets, build the setlist, send it to your controller.</figcaption>
         </figure>
+      </div>
+    </section>
+
+    <!-- Simulator -->
+    <section class="sim-section" id="try">
+      <div class="wrap">
+        <p class="bracket reveal">{ Try it }</p>
+        <h2 class="heading" data-split>Your whole week, in under ten minutes.</h2>
+        <p class="body-lg reveal">No more small, medium and large every Sunday. Give every part of every song its own sounds, from presets you already have. Press Start and see how long a full setlist really takes.</p>
+        <div class="sim reveal" id="sim"></div>
       </div>
     </section>
 
@@ -559,6 +571,7 @@
     </div>
   </footer>
 
-  <script src="script.js?v=13"></script>
+  <script src="script.js?v=14"></script>
+  <script src="simulator.js?v=1"></script>
 </body>
 </html>
