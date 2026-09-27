@@ -1,127 +1,157 @@
-/* ---------- Simulator: a playful 8-bit corner of the site ---------- */
+/* ---------- Simulator: a working copy of the Midiator app (dark mode) ---------- */
 .sim-section { padding-block: var(--section); border-top: 1px solid var(--line); }
-.sim-section .body-lg { max-width: 60ch; margin-bottom: 36px; }
-.sr-only { position: absolute; width: 1px; height: 1px; overflow: hidden; clip: rect(0 0 0 0); white-space: nowrap; }
+.sim-section .body-lg { max-width: 60ch; margin-bottom: 32px; }
 
-.px { font-family: "Press Start 2P", var(--mono); letter-spacing: 0; }
+/* The clock, above the app window (site style) */
+.sim-hud { display: flex; align-items: center; gap: 16px; margin-bottom: 14px; position: sticky; top: 72px; z-index: 5; background: var(--bg); padding: 10px 0; }
+.sim-time { font-family: var(--mono); font-size: 22px; font-weight: 500; color: var(--green); min-width: 4.5ch; }
+.sim-count { font-family: var(--mono); font-size: 13px; color: var(--muted); white-space: nowrap; }
+.sim-bar { position: relative; flex: 1; height: 8px; border-radius: 99px; background: var(--panel-2); overflow: hidden; }
+.sim-bar__fill { position: absolute; inset: 0 auto 0 0; width: 0; background: var(--green); border-radius: 99px; transition: width .25s linear; }
+.sim-bar__fill.over { background: var(--brand); }
+.sim-bar__mark { display: none; }
 
-/* The machine: a chunky pixel frame (stepped corners from box-shadows, no rounding). */
-.sim {
-  --px: 4px;
-  --sim-bg: #15171a;
-  --sim-ink: #0e100f;
+/* The app window: the app's own dark tokens, scoped to it */
+.app-window {
+  --a-bg: #141412; --a-surface: #1d1c19; --a-surface-2: #282723;
+  --a-border: rgba(255, 255, 255, .1); --a-border-strong: rgba(255, 255, 255, .2);
+  --a-text: #f3f1ea; --a-text-2: #b3b0a6; --a-muted: #77736a;
+  --a-accent: #ff8a6a; --a-fill: #ff6b45; --a-fill-hover: #ff8261; --a-on-fill: #1b1a18; --a-accent-bg: #45190c;
   position: relative;
-  background: var(--sim-bg);
-  color: var(--cream);
-  margin: var(--px);
-  box-shadow:
-    0 calc(var(--px) * -1) 0 0 var(--cream), 0 var(--px) 0 0 var(--cream),
-    calc(var(--px) * -1) 0 0 0 var(--cream), var(--px) 0 0 0 var(--cream),
-    0 0 0 calc(var(--px) * 2) var(--sim-ink);
-  image-rendering: pixelated;
+  border-radius: 14px;
+  overflow: hidden;
+  border: 1px solid #34352f;
+  background: var(--a-bg);
+  color: var(--a-text);
+  font: 14px/1.4 var(--font);
+  box-shadow: 0 40px 100px rgba(0, 0, 0, .5);
+  text-align: left;
 }
-.sim::after { /* faint scanlines */
-  content: ""; position: absolute; inset: 0; pointer-events: none;
-  background: repeating-linear-gradient(0deg, rgba(255, 255, 255, .025) 0 2px, transparent 2px 4px);
-}
-.sim-screen { position: relative; z-index: 1; padding: clamp(18px, 4vw, 40px); display: grid; gap: 22px; }
-.sim-kicker { font-family: "Press Start 2P", var(--mono); font-size: clamp(14px, 2vw, 18px); color: var(--green); line-height: 1.5; }
-.sim-lead { color: var(--muted); max-width: 62ch; line-height: 1.55; }
-.sim-small { color: var(--dim); font-size: 13px; max-width: 62ch; }
-.sim-icon { display: inline-block; width: 32px; height: 32px; flex: none; }
-.sim-icon svg { display: block; width: 100%; height: 100%; }
+.app-window button, .app-window select { font-family: inherit; }
+.app-titlebar { height: 34px; display: flex; align-items: center; gap: 8px; padding: 0 14px; background: #1c1c1a; border-bottom: 1px solid #2c2d28; position: relative; }
+.app-titlebar i { width: 12px; height: 12px; border-radius: 50%; background: #ff5f57; }
+.app-titlebar i:nth-child(2) { background: #febc2e; }
+.app-titlebar i:nth-child(3) { background: #28c840; }
+.app-titlebar span { position: absolute; inset: 0; display: grid; place-items: center; font-size: 13px; color: #8b8b80; pointer-events: none; }
 
-/* The chunky 8-bit button */
+.app { max-height: min(720px, 78vh); overflow-y: auto; overscroll-behavior: contain; }
+.app-top { position: sticky; top: 0; z-index: 2; display: flex; align-items: center; gap: 18px; padding: 10px 20px; background: var(--a-surface); border-bottom: .5px solid var(--a-border); }
+.app-brand { display: inline-flex; align-items: center; gap: 8px; font-weight: 650; font-size: 16px; letter-spacing: -.03em; }
+.app-brand img { border-radius: 5px; }
+.app-tabs { display: flex; gap: 4px; }
+.app-tabs span { padding: 5px 10px; border-radius: 8px; color: var(--a-text-2); font-weight: 500; font-size: 13px; }
+.app-tabs .on { color: var(--a-text); background: var(--a-surface-2); }
+.app-spacer { flex: 1; }
+.app-conn { display: inline-flex; align-items: center; gap: 7px; border: .5px solid var(--a-border); border-radius: 99px; padding: 4px 12px; font-size: 12px; }
+.app-dot { width: 7px; height: 7px; border-radius: 50%; background: #639922; }
+
+.app-main { max-width: 760px; margin: 0 auto; padding: 22px 20px 30px; }
+.app-head { display: flex; align-items: flex-start; gap: 12px; margin-bottom: 10px; }
+.app-head > div { flex: 1; }
+.app-title { font-size: 24px; font-weight: 650; letter-spacing: -.02em; }
+.app-sub { font-size: 12px; color: var(--a-text-2); margin-top: 2px; }
+.app-controls { display: flex; flex-wrap: wrap; gap: 14px; margin: 6px 0 18px; }
+.app-field { display: inline-flex; align-items: center; gap: 8px; font-size: 12px; color: var(--a-text-2); }
+.app-select { display: inline-block; padding: 6px 10px; border: .5px solid var(--a-border); border-radius: 8px; background: var(--a-surface); color: var(--a-text); font-size: 13px; }
+.app-num { min-width: 50px; }
+.app-seg { display: inline-flex; border: .5px solid var(--a-border); border-radius: 8px; overflow: hidden; }
+.app-seg span { padding: 5px 11px; font-size: 12px; background: var(--a-surface); color: var(--a-text); }
+.app-seg span + span { border-left: .5px solid var(--a-border); }
+.app-seg .on { background: var(--a-accent-bg); color: var(--a-accent); font-weight: 500; }
+
+.app-btn { font-size: 13px; padding: 7px 12px; border-radius: 8px; border: .5px solid var(--a-border); background: var(--a-surface); color: var(--a-text); text-decoration: none; cursor: var(--cur-hover, pointer); white-space: nowrap; }
+.app-btn:hover:not(:disabled) { background: var(--a-surface-2); }
+.app-btn:disabled { opacity: .5; cursor: not-allowed; }
+.app-btn.primary { background: var(--a-fill); color: var(--a-on-fill); border: none; font-weight: 500; }
+.app-btn.primary:hover:not(:disabled) { background: var(--a-fill-hover); }
+.app-btn.big { font-size: 15px; padding: 11px 18px; }
+.app-window :focus-visible { outline: 2px solid var(--a-accent); outline-offset: 2px; }
+
+.song-card { background: var(--a-surface); border: .5px solid var(--a-border); border-radius: 14px; padding: 14px; margin-bottom: 14px; }
+.song-head { display: flex; align-items: center; gap: 8px; margin-bottom: 10px; }
+.song-grip { color: var(--a-muted); letter-spacing: -3px; padding: 0 6px 0 2px; }
+.song-title { font-size: 16px; font-weight: 600; letter-spacing: -.01em; }
+.song-bpm { display: inline-flex; align-items: center; gap: 4px; font-size: 11px; color: var(--a-muted); margin-left: 8px; }
+.song-bpm .app-select { padding: 4px 6px; min-width: 44px; font-size: 12px; }
+.app-pill { font-size: 11px; padding: 3px 9px; border-radius: 99px; white-space: nowrap; background: var(--a-surface-2); color: var(--a-text-2); }
+.app-pill.st-ok { background: #27500a; color: #c0dd97; }
+
+.mc6-grid { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 8px; }
+.cell { display: flex; flex-direction: column; align-items: flex-start; gap: 2px; min-height: 74px; padding: 8px 10px; text-align: left; border: .5px solid var(--a-border); border-radius: 10px; background: var(--a-surface); color: var(--a-text); font: inherit; }
+.cell-letter { font-size: 11px; color: var(--a-muted); }
+.cell-name { font-size: 14px; font-weight: 600; letter-spacing: -.01em; }
+.cell-presets { font-size: 11px; color: var(--a-text-2); white-space: pre-line; line-height: 1.4; }
+.cell-section { cursor: var(--cur-hover, pointer); }
+.cell-section:hover:not(:disabled) { border-color: var(--a-border-strong); }
+.cell-section:disabled { cursor: default; }
+.cell-section.selected { border-color: var(--a-accent); box-shadow: 0 0 0 3px var(--a-accent-bg); }
+.cell-todo .cell-presets { color: var(--a-accent); }
+.cell-tempo { background: var(--a-surface-2); }
+.cell-empty { border-style: dashed; background: transparent; color: var(--a-muted); }
+.cell-add { font-size: 12px; margin: auto 0; }
+
+.section-editor { margin-top: 10px; padding: 12px; border-radius: 10px; background: var(--a-surface-2); display: flex; flex-direction: column; gap: 10px; }
+.se-name { display: flex; flex-wrap: wrap; align-items: center; gap: 10px; }
+.se-title { font-weight: 600; min-width: 140px; }
+.se-hint { font-size: 12px; color: var(--a-text-2); }
+.se-pedals { display: grid; grid-template-columns: repeat(auto-fit, minmax(170px, 1fr)); gap: 8px; }
+.se-pedal { display: flex; flex-direction: column; gap: 4px; font-size: 11px; color: var(--a-text-2); }
+.se-pedal select { font-size: 13px; padding: 7px 10px; border-radius: 8px; border: .5px solid var(--a-border); background: var(--a-surface); color: var(--a-text); cursor: var(--cur-hover, pointer); }
+.se-pedal select:focus { outline: none; border-color: var(--a-accent); box-shadow: 0 0 0 3px var(--a-accent-bg); }
+.se-actions { display: flex; align-items: center; gap: 8px; }
+
+/* Before and after: a dialog over the app, like the app's own */
+.app-overlay { position: absolute; inset: 34px 0 0; z-index: 4; display: grid; place-items: center; padding: 20px; background: rgba(0, 0, 0, .45); }
+.app-dialog { width: min(480px, 100%); max-height: 100%; overflow-y: auto; background: var(--a-surface); border: .5px solid var(--a-border); border-radius: 14px; padding: 22px 22px 24px; box-shadow: 0 20px 60px rgba(0, 0, 0, .5); display: grid; gap: 14px; }
+.app-dialog__title { font-size: 18px; font-weight: 650; letter-spacing: -.02em; }
+.app-dialog__sub { font-size: 13px; color: var(--a-text-2); line-height: 1.5; }
+.rig { list-style: none; padding: 0; margin: 0; display: grid; gap: 6px; }
+.rig li { display: flex; align-items: center; gap: 10px; padding: 7px 8px 7px 12px; border-radius: 8px; background: var(--a-surface-2); font-size: 13px; font-weight: 500; }
+.rig-n { color: var(--a-muted); font-size: 12px; font-weight: 400; margin-right: auto; }
+.rig-x { border: 0; background: none; color: var(--a-muted); font-size: 17px; line-height: 1; padding: 2px 6px; cursor: var(--cur-hover, pointer); }
+.rig-x:hover { color: var(--a-text); }
+.rig-add { background: transparent !important; padding: 0 !important; }
+.rig-add select { width: 100%; font-size: 13px; padding: 8px 10px; border-radius: 8px; border: .5px dashed var(--a-border-strong); background: transparent; color: var(--a-text-2); }
+.start-row { display: flex; align-items: center; gap: 18px; flex-wrap: wrap; padding-top: 4px; }
+.start-note { font-size: 12px; color: var(--a-text-2); }
+.app-dialog--done { text-align: center; justify-items: center; }
+.done-time { font-family: var(--mono); font-size: 56px; font-weight: 500; line-height: 1; color: var(--green); letter-spacing: -.02em; }
+.done-actions { display: flex; flex-wrap: wrap; justify-content: center; gap: 8px; padding-top: 6px; }
+
+/* The one 8-bit thing: the Start button */
 .px-btn {
+  --px: 4px;
   font-family: "Press Start 2P", var(--mono);
-  font-size: clamp(16px, 2.2vw, 22px);
+  font-size: 18px;
   text-transform: uppercase;
-  color: var(--sim-ink, #0e100f);
+  color: #0e100f;
   background: var(--brand);
-  border: var(--px, 4px) solid var(--sim-ink, #0e100f);
-  padding: 18px 34px 16px;
+  border: var(--px) solid #0e100f;
+  padding: 16px 30px 14px;
   box-shadow:
     inset calc(var(--px) * -1) calc(var(--px) * -1) 0 rgba(0, 0, 0, .3),
     inset var(--px) var(--px) 0 rgba(255, 255, 255, .35),
-    0 calc(var(--px) * 1.5) 0 0 #7a1f0a;
-  transition: transform .05s steps(1), box-shadow .05s steps(1);
+    0 calc(var(--px) * 1.5) 0 0 #7a1f0a,
+    0 0 0 2px var(--a-text, #fffce1);
+  image-rendering: pixelated;
   cursor: var(--cur-hover, pointer);
+  transition: transform .05s steps(1), box-shadow .05s steps(1);
 }
 .px-btn:hover { background: #ff6a44; }
-.px-btn:active:not(:disabled) {
-  transform: translateY(calc(var(--px) * 1.5));
-  box-shadow: inset var(--px) var(--px) 0 rgba(0, 0, 0, .3);
+.px-btn:active {
+  transform: translateY(6px);
+  box-shadow: inset var(--px) var(--px) 0 rgba(0, 0, 0, .3), 0 0 0 2px var(--a-text, #fffce1);
 }
-.px-btn:disabled { background: #5a3a31; color: #2b211d; box-shadow: none; transform: none; cursor: not-allowed; }
-.px-btn:focus-visible, .sim-chip:focus-visible, .sim-dot:focus-visible, .sim-back:focus-visible, .sim-share:focus-visible, .sim-x:focus-visible {
-  outline: 2px dashed var(--green); outline-offset: 3px;
-}
-.px-btn--small { font-size: 13px; padding: 12px 18px 10px; }
 
-.sim-start { display: flex; align-items: center; gap: 26px; flex-wrap: wrap; }
-.sim-blink { font-family: "Press Start 2P", var(--mono); font-size: 12px; color: var(--brand-2); animation: sim-blink 1s steps(1) infinite; }
-@keyframes sim-blink { 50% { opacity: 0; } }
-
-/* 1. Rig */
-.sim-rig, .sim-songs, .sim-recap { padding: 0; margin: 0; }
-.sim-rig { list-style: none; display: grid; grid-template-columns: repeat(auto-fill, minmax(128px, 1fr)); gap: 10px; }
-.sim-rig__pedal, .sim-rig__add { position: relative; display: flex; flex-direction: column; align-items: flex-start; gap: 6px; padding: 12px; border: 2px solid var(--line); background: #1c1f22; }
-.sim-rig__name { font-family: "Press Start 2P", var(--mono); font-size: 11px; }
-.sim-rig__count { font-family: var(--mono); font-size: 12px; color: var(--muted); }
-.sim-rig__add { border-style: dashed; justify-content: center; }
-.sim-rig__add select { width: 100%; background: #1c1f22; color: var(--cream); border: 2px solid var(--line); padding: 8px; font: 13px var(--mono); }
-.sim-x { position: absolute; top: 4px; right: 6px; background: none; border: 0; color: var(--muted); font-size: 18px; line-height: 1; padding: 4px; cursor: var(--cur-hover, pointer); }
-.sim-x:hover { color: var(--brand-2); }
-
-/* 2. Play */
-.sim-hud { display: flex; align-items: center; gap: 16px; position: sticky; top: 72px; z-index: 3; background: var(--sim-bg); padding: 8px 0; }
-.sim-time, .sim-count { font-family: "Press Start 2P", var(--mono); font-size: clamp(14px, 2vw, 20px); }
-.sim-time { color: var(--green); min-width: 5ch; }
-.sim-count { color: var(--muted); font-size: 12px; }
-.sim-bar { position: relative; flex: 1; height: 16px; border: 2px solid var(--line); background: #0b0c0d; }
-.sim-bar__fill { position: absolute; inset: 0 auto 0 0; width: 0; background: repeating-linear-gradient(90deg, var(--green) 0 8px, #7ccf5c 8px 10px); transition: width .25s steps(4); }
-.sim-bar__fill.over { background: repeating-linear-gradient(90deg, var(--brand) 0 8px, #b3401f 8px 10px); }
-.sim-bar__mark { position: absolute; right: 4px; top: 50%; transform: translateY(-50%); font: 10px var(--mono); color: var(--muted); }
-
-.sim-body { display: grid; grid-template-columns: 220px 1fr; gap: 24px; align-items: start; }
-.sim-songs { list-style: none; display: grid; gap: 14px; }
-.sim-songs li { display: grid; gap: 6px; }
-.sim-songs__title { font-size: 13px; color: var(--muted); }
-.sim-songs__parts { display: flex; flex-wrap: wrap; gap: 5px; }
-.sim-dot { width: 28px; height: 28px; padding: 0; border: 2px solid var(--line); background: #1c1f22; color: var(--muted); font: 11px "Press Start 2P", var(--mono); cursor: var(--cur-hover, pointer); }
-.sim-dot.is-done { background: #2c4a22; border-color: var(--green); color: var(--green); }
-.sim-dot.is-current { border-color: var(--brand-2); color: var(--cream); box-shadow: 0 0 0 2px var(--brand-2); }
-
-.sim-part { display: grid; gap: 14px; min-width: 0; }
-.sim-part__song { color: var(--muted); font-size: 14px; }
-.sim-part__name { font-family: "Press Start 2P", var(--mono); font-size: clamp(18px, 3vw, 28px); line-height: 1.2; }
-.sim-hint { color: var(--dim); font-size: 13px; }
-.sim-pedals { display: grid; gap: 14px; }
-.sim-pedal__name { display: flex; align-items: center; gap: 8px; font-family: "Press Start 2P", var(--mono); font-size: 11px; margin-bottom: 8px; }
-.sim-pedal__name .sim-icon { width: 24px; height: 24px; }
-.sim-chips { display: flex; flex-wrap: wrap; gap: 6px; }
-.sim-chip { font: 12px var(--mono); color: var(--cream); background: #1c1f22; border: 2px solid var(--line); padding: 6px 9px; cursor: var(--cur-hover, pointer); }
-.sim-chip:hover { border-color: var(--muted); }
-.sim-chip.is-on { background: var(--brand); border-color: var(--cream); color: #0e100f; font-weight: 500; }
-.sim-nav { display: flex; justify-content: space-between; align-items: center; gap: 12px; padding-top: 6px; }
-.sim-back, .sim-share { font: 13px var(--mono); color: var(--cream); background: none; border: 2px solid var(--line); padding: 10px 14px; cursor: var(--cur-hover, pointer); }
-.sim-back:disabled { opacity: .35; cursor: default; }
-.sim-back:hover:not(:disabled), .sim-share:hover { border-color: var(--cream); }
-
-/* 3. Done */
-.sim-final { font-family: "Press Start 2P", var(--mono); font-size: clamp(44px, 9vw, 88px); color: var(--green); line-height: 1; text-shadow: 6px 6px 0 #2c4a22; }
-.sim-result { color: var(--cream); font-size: 17px; }
-.sim-recap { list-style: none; display: grid; gap: 8px; font-size: 13px; color: var(--muted); }
-.sim-recap strong { color: var(--cream); font-weight: 500; margin-right: 8px; }
-.sim-actions { display: flex; flex-wrap: wrap; gap: 12px; align-items: center; }
-
-@media (max-width: 760px) {
-  .sim-body { grid-template-columns: 1fr; }
-  .sim-songs { grid-template-columns: repeat(2, minmax(0, 1fr)); }
-  .sim-hud { gap: 10px; }
-  .px-btn { padding: 14px 22px 12px; }
+@media (max-width: 640px) {
+  .app-tabs span:not(.on), .app-conn { display: none; }
+  .app-main { padding: 16px 12px 24px; }
+  .app-head { flex-direction: column; }
+  .mc6-grid { gap: 6px; }
+  .cell { min-height: 64px; padding: 6px 8px; }
+  .cell-name { font-size: 13px; }
+  .done-time { font-size: 44px; }
 }
 @media (prefers-reduced-motion: reduce) {
-  .sim-blink { animation: none; }
   .sim-bar__fill { transition: none; }
 }

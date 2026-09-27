@@ -20,8 +20,8 @@
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Geist:wght@400;500;600;700&family=Geist+Mono:wght@400;500&family=Press+Start+2P&display=swap" rel="stylesheet">
-  <link rel="stylesheet" href="styles.css?v=14">
-  <link rel="stylesheet" href="simulator.css?v=1">
+  <link rel="stylesheet" href="styles.css?v=15">
+  <link rel="stylesheet" href="simulator.css?v=3">
 </head>
 <body>
 
@@ -39,10 +39,10 @@
         <span></span><span></span>
       </button>
       <nav class="nav__links" id="nav-links">
+        <a href="#why">Why</a>
+        <a href="#try">Try it</a>
         <a href="#features">Features</a>
         <a href="#how">How it works</a>
-        <a href="#try">Try it</a>
-        <a href="#safety">Safety</a>
         <a href="#gear">Gear</a>
         <a href="#faq">FAQ</a>
         <a href="#contact">Contact</a>
@@ -90,10 +90,10 @@
 
         <div class="hero__foot">
           <p class="bracket">{ The MIDI mediator for guitarists }</p>
-          <p class="lede">Midiator sits between you and your rig. It turns the presets you've already dialed in into one bank per song on your MIDI controller, with tempo, tap and footswitch layout. It writes straight to a Morningstar or Pirate MIDI controller, and gives you a simple setup sheet for Boss, RJM, JET and M-VAVE.</p>
+          <p class="lede">Turn your weekly setlist into song-specific MIDI presets in under 10 minutes, so you can use your full rig without the prep.</p>
           <div class="actions">
             <a class="pill pill--cta" href="#download">Download for Mac</a>
-            <a class="pill" href="#how">See how it works</a>
+            <a class="pill" href="#try">Try it: beat 10 minutes</a>
           </div>
         </div>
       </div>
@@ -107,18 +107,52 @@
       </div>
     </div>
 
-    <!-- Statement -->
-    <section class="statement wrap">
+    <!-- Why: the three pillars -->
+    <section class="pillars wrap" id="why">
       <p class="bracket reveal">{ Why Midiator }</p>
-      <h2 class="heading heading--xl" data-scrub>MIDI controlling, made <em class="grad">simple.</em></h2>
-      <p class="body-lg reveal">Sunday's setlist shouldn't eat your Saturday night. You already spent hours getting every delay and reverb right. Midiator doesn't guess new sounds. It recalls the ones you made, song by song, section by section, with exact Program Change math.</p>
+      <h2 class="heading heading--xl" data-scrub>Your full rig, without the <em class="grad">prep.</em></h2>
+      <ol class="pillars__list">
+        <li class="pillar reveal">
+          <span class="pillar__n">01</span>
+          <h3>Under 10 minutes</h3>
+          <p>Your whole week's setlist, song by song, part by part. Time yourself below.</p>
+          <a class="pillar__link" href="#try">Beat the clock &rarr;</a>
+        </li>
+        <li class="pillar reveal" style="--d:.12s">
+          <span class="pillar__n">02</span>
+          <h3>No more small, medium, large</h3>
+          <p>Stop reusing the same three presets every week. Every part of every song gets its own sound.</p>
+        </li>
+        <li class="pillar reveal" style="--d:.24s">
+          <span class="pillar__n">03</span>
+          <h3>Know two things</h3>
+          <p>Which presets are on your pedals, and which you want in each part. No programming.</p>
+        </li>
+      </ol>
+      <p class="pillars__why reveal">Less prep, more room to serve the song, the band and the room.</p>
+    </section>
+
+    <!-- Simulator -->
+    <section class="sim-section" id="try">
+      <div class="wrap">
+        <p class="bracket reveal">{ Try it }</p>
+        <h2 class="heading" data-split>Your whole week, in under ten minutes.</h2>
+        <p class="body-lg reveal">Four songs, eighteen parts, the presets already on your pedals. Press Start.</p>
+        <div class="sim reveal" id="sim"></div>
+      </div>
     </section>
 
     <!-- Features -->
     <section class="wrap features" id="features">
       <p class="bracket reveal">{ Inside Midiator }</p>
+      <div class="feature-tabs reveal" role="tablist" aria-label="Midiator's screens">
+        <button type="button" role="tab" aria-selected="true" data-tab="0">Setlists</button>
+        <button type="button" role="tab" aria-selected="false" data-tab="1">Songs</button>
+        <button type="button" role="tab" aria-selected="false" data-tab="2">My presets</button>
+        <button type="button" role="tab" aria-selected="false" data-tab="3">Scan controller</button>
+      </div>
 
-      <article class="feature">
+      <article class="feature" role="tabpanel">
         <div class="feature__art reveal reveal--wipe">
           <div class="mock mock--setlist" data-scene="setlist">
             <div class="songs">
@@ -166,7 +200,7 @@
         </div>
       </article>
 
-      <article class="feature">
+      <article class="feature" role="tabpanel" hidden>
         <div class="feature__art reveal reveal--wipe">
           <div class="mock mock--list" data-scene="songs">
             <div class="row"><strong>Build My Life</strong><span class="chip chip--ghost" data-bank="26">+ Add to setlist</span></div>
@@ -184,12 +218,12 @@
         </div>
       </article>
 
-      <article class="feature">
+      <article class="feature" role="tabpanel" hidden>
         <div class="feature__art reveal reveal--wipe">
           <div class="mock mock--presets" data-scene="presets">
             <div class="thead"><span>Pedal</span><span>Preset</span><span>Slot</span></div>
             <div class="trow" data-msg="PC 25"><span>TimeLine</span><strong>Dotted 8th</strong><code>12B</code></div>
-            <div class="trow" data-msg="PC 12"><span>BigSky</span><strong>Worship Swell</strong><code>04A</code></div>
+            <div class="trow" data-msg="PC 12"><span>BigSky</span><strong>Big Swell</strong><code>04A</code></div>
             <div class="trow" data-msg="CC 0 = 1 &middot; PC 87"><span>BigSky</span><strong>Cathedral</strong><code>71C</code></div>
             <div class="trow" data-msg="PC 17"><span>Meris LVX</span><strong>Ambient Wash</strong><code>PC 17</code></div>
             <div class="trow" data-msg="CC 0 &middot; CC 32 &middot; PC 67"><span>Quad Cortex</span><strong>Clean Edge</strong><code>9D</code></div>
@@ -203,7 +237,7 @@
         </div>
       </article>
 
-      <article class="feature">
+      <article class="feature" role="tabpanel" hidden>
         <div class="feature__art reveal reveal--wipe">
           <div class="mock mock--scan" data-scene="scan">
             <div class="scan__head">
@@ -214,7 +248,7 @@
             <ul class="scan__rows">
               <li><span class="scan__check" aria-hidden="true"></span><span class="scan__dev"><strong>TimeLine 12B</strong><span>Clean verse</span></span><code>Bank 1 &middot; A</code></li>
               <li><span class="scan__check" aria-hidden="true"></span><span class="scan__dev"><strong>BigSky 71C</strong><span>Big chorus</span></span><code>Bank 1 &middot; B</code></li>
-              <li class="is-known"><span class="scan__check" aria-hidden="true"></span><span class="scan__dev"><strong>BigSky 04A</strong><span>Worship Swell &middot; have it</span></span><code>Bank 1 &middot; A</code></li>
+              <li class="is-known"><span class="scan__check" aria-hidden="true"></span><span class="scan__dev"><strong>BigSky 04A</strong><span>Big Swell &middot; have it</span></span><code>Bank 1 &middot; A</code></li>
               <li><span class="scan__check" aria-hidden="true"></span><span class="scan__dev"><strong>Quad Cortex 3B</strong><span>Ambient wash</span></span><code>Bank 3 &middot; H</code></li>
             </ul>
             <span class="scan__add">Add 3 to My presets</span>
@@ -232,7 +266,7 @@
     <section class="how" id="how">
       <div class="wrap">
         <p class="bracket reveal">{ How it works }</p>
-        <h2 class="heading" data-split>Three steps to Sunday.</h2>
+        <h2 class="heading" data-split>Three steps to the gig.</h2>
         <ol class="steps">
           <li class="step reveal">
             <span class="step__n">01</span>
@@ -257,16 +291,6 @@
           </video>
           <figcaption>Midiator in 40 seconds: find your presets, build the setlist, send it to your controller.</figcaption>
         </figure>
-      </div>
-    </section>
-
-    <!-- Simulator -->
-    <section class="sim-section" id="try">
-      <div class="wrap">
-        <p class="bracket reveal">{ Try it }</p>
-        <h2 class="heading" data-split>Your whole week, in under ten minutes.</h2>
-        <p class="body-lg reveal">No more small, medium and large every Sunday. Give every part of every song its own sounds, from presets you already have. Press Start and see how long a full setlist really takes.</p>
-        <div class="sim reveal" id="sim"></div>
       </div>
     </section>
 
@@ -310,6 +334,9 @@
           <p class="gear__sheet"><strong>Setup sheet</strong> Some controllers can only be programmed from their own editor. Midiator still lays out every song, then shows exactly what to enter on each switch.</p>
         </div>
 
+        <p class="gear__brands reveal">Morningstar &middot; Pirate MIDI &middot; Strymon &middot; Meris &middot; Line 6 &middot; Neural DSP &middot; Walrus Audio &middot; Eventide &middot; Chase Bliss &middot; Selah &middot; Boss &middot; RJM &middot; JET &middot; M-VAVE</p>
+        <details class="gear__all">
+          <summary class="pill">See every supported device</summary>
         <div class="gear__grid">
           <div class="brand-card reveal">
             <h3>Morningstar</h3>
@@ -409,6 +436,8 @@
           </div>
         </div>
 
+        </details>
+
         <div class="request reveal">
           <div class="request__copy">
             <h3>Pedal or MIDI controller not on the list?</h3>
@@ -480,6 +509,8 @@
           <p class="download__meta">Free &middot; Apple chip and Intel</p>
         </div>
 
+        <details class="install__wrap">
+          <summary>First time opening it? Three quick steps</summary>
         <ol class="install">
           <li class="install__step reveal">
             <span class="install__n">1</span>
@@ -494,7 +525,8 @@
             <p><strong>No Open button?</strong> On newer macOS, go to System Settings &rarr; Privacy &amp; Security and click Open Anyway.</p>
           </li>
         </ol>
-        <p class="install__note reveal">After that it opens like any app, and new versions install themselves from inside Midiator.</p>
+        <p class="install__note">After that it opens like any app, and new versions install themselves from inside Midiator.</p>
+        </details>
 
         <div class="keep-posted" id="access">
           <h3 class="reveal">Want to hear what's new?</h3>
@@ -571,7 +603,7 @@
     </div>
   </footer>
 
-  <script src="script.js?v=14"></script>
-  <script src="simulator.js?v=1"></script>
+  <script src="script.js?v=15"></script>
+  <script src="simulator.js?v=3"></script>
 </body>
 </html>
