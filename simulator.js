@@ -19,7 +19,7 @@
   ];
   const START_RIG = ["drive", "delay", "reverb", "mod", "pitch"];
 
-  // A normal Sunday: 4 songs, 18 parts, laid out on an MC6 like the app does (bottom A B C, top D E F).
+  // A normal week: 4 songs, 18 parts, laid out on an MC6 like the app does (bottom A B C, top D E F).
   const SETLIST = [
     { title: "Holy Forever", bpm: 72, parts: ["Intro", "Verse", "Chorus", "Bridge", "Outro"] },
     { title: "Goodness of God", bpm: 63, parts: ["Verse", "Chorus", "Bridge", "Tag"] },
@@ -215,7 +215,7 @@
 
   function doneCard() {
     const under = TEN_MINUTES - finishedIn;
-    const share = `I set up ${total} song-specific pedal presets for Sunday in ${clock(finishedIn)} with Midiator. Beat my time: ${SITE}#try`;
+    const share = `I set up ${total} song-specific pedal presets for this week in ${clock(finishedIn)} with Midiator. Beat my time: ${SITE}#try`;
     const shareBtn = el("button", {
       type: "button",
       class: "app-btn",

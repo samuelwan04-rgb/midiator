@@ -12,7 +12,7 @@ experience.
 - Plain `index.html` + `styles.css` + `script.js`, no build step. Hosted on GitHub Pages from
   `main` at https://samuelwan04-rgb.github.io/midiator/. Merging a PR into `main` publishes it.
 - **Cache numbers:** after changing `styles.css` or `script.js`, raise `?v=N` on both lines that
-  load them in `index.html` (currently 14; simulator.css/js have their own, currently 2). Otherwise browsers keep showing the old files.
+  load them in `index.html` (currently 15; simulator.css/js have their own, currently 3). Otherwise browsers keep showing the old files.
 - Animations use GSAP-style scroll reveals (`.reveal`), split headings (`data-split`) and the
   braces/glint heading effect. Keep motion subtle; Sam asked not to overdo it.
 - The share preview is `assets/og-image.png` (1200×630, tagline "Setlists, settled."). Raise its
@@ -36,6 +36,18 @@ experience.
 `tools/tutorial-video/` in the app repo (`sh tools/tutorial-video/make.sh`, which also makes a 4K
 copy). Re-render it when the app's screens change, copy the 1080p file and poster here, and raise
 the `?v=` on both in `index.html`.
+
+## Page order and USP (2026-09-27)
+
+Order: hero (positioning statement from the business plan's "Unique selling point" tab) -> **Why**
+(`#why`, the three pillars: Under 10 minutes / No more small, medium, large / Know two things, plus
+one "serve the song, the band and the room" line) -> **Try it** (simulator) -> Features (`#features`,
+now ONE showcase with tabs; script.js "Feature tabs" hides the other three, whose scenes pause on
+their own) -> How it works + video -> Safety -> Gear (brand line always shown, the full device list
+inside `<details class="gear__all">`) -> FAQ -> Download (install steps inside a "First time
+opening it?" `<details>`) -> Contact. Sam found the page long and "very committed" to read; this cut
+it ~22% on desktop and ~35% on phones. Keep it short, and never church-only (the plan says so):
+"Sunday" wording was made neutral; worship song names in examples are fine.
 
 ## Simulator ("Try it", #try)
 

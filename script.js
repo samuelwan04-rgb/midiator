@@ -689,3 +689,28 @@ if (demo) {
     ).observe(demo);
   }
 }
+
+// ---------- Feature tabs ----------
+// One showcase with four views instead of four screens stacked. Hidden views pause their
+// animations by themselves (their scene only runs while it's on screen).
+const tabs = [...document.querySelectorAll(".feature-tabs [data-tab]")];
+const panels = [...document.querySelectorAll(".features .feature")];
+function showTab(i, focus) {
+  tabs.forEach((t, k) => {
+    t.setAttribute("aria-selected", String(k === i));
+    t.tabIndex = k === i ? 0 : -1;
+  });
+  panels.forEach((p, k) => (p.hidden = k !== i));
+  panels[i]?.querySelectorAll(".reveal, .split").forEach((el) => el.classList.add("is-in"));
+  if (focus) tabs[i].focus();
+}
+tabs.forEach((t, i) => {
+  t.addEventListener("click", () => showTab(i));
+  t.addEventListener("keydown", (e) => {
+    if (e.key === "ArrowRight" || e.key === "ArrowLeft") {
+      e.preventDefault();
+      showTab((i + (e.key === "ArrowRight" ? 1 : tabs.length - 1)) % tabs.length, true);
+    }
+  });
+});
+if (tabs.length) showTab(0);
