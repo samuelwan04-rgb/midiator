@@ -12,9 +12,9 @@ experience.
 - Plain `index.html` + `styles.css` + `script.js`, no build step. Hosted on GitHub Pages from
   `main` at https://samuelwan04-rgb.github.io/midiator/. Merging a PR into `main` publishes it.
 - **Cache numbers:** after changing `styles.css` or `script.js`, raise `?v=N` on both lines that
-  load them in `index.html` (currently 15; simulator.css/js have their own, currently 3). Otherwise browsers keep showing the old files.
-- Animations use GSAP-style scroll reveals (`.reveal`), split headings (`data-split`) and the
-  braces/glint heading effect. Keep motion subtle; Sam asked not to overdo it.
+  load them in `index.html` (currently 20; simulator.css/js have their own, currently 10). Otherwise browsers keep showing the old files.
+- Reveals: `.reveal` fades up once when it scrolls into view (script.js). No split text, marquee or
+  custom cursor any more (removed in the 2026-09-28 redesign).
 - The share preview is `assets/og-image.png` (1200×630, tagline "Setlists, settled."). Raise its
   `?v=` in the `og:image` tag when it changes, or WhatsApp/Telegram keep the old one.
 
@@ -31,53 +31,51 @@ experience.
 
 ## Tutorial video
 
-`assets/midiator-tutorial.mp4` (38.6 s, 1080p60, ~4 MB) plays under the How it works steps, with
-`assets/tutorial-poster.jpg` as its still. It's rendered from the real app screens by
-`tools/tutorial-video/` in the app repo (`sh tools/tutorial-video/make.sh`, which also makes a 4K
-copy). Re-render it when the app's screens change, copy the 1080p file and poster here, and raise
-the `?v=` on both in `index.html`.
+`assets/midiator-tutorial.mp4` (38.6 s, 1080p60, ~4 MB) opens in a `<dialog>` from the full-width
+"Watch the tour" tile in Features, with `assets/tutorial-poster.jpg` as the tile's background. It's
+rendered from the real app screens by `tools/tutorial-video/` in the app repo (`sh
+tools/tutorial-video/make.sh`). Re-render it when the app's screens change, copy the 1080p file and
+poster here, and raise the `?v=` on both.
 
-## Page order and USP (2026-09-27)
+## Redesign (2026-09-28)
 
-Order: hero (positioning statement from the business plan's "Unique selling point" tab) -> **Why**
-(`#why`, the three pillars: Under 10 minutes / No more small, medium, large / Know two things, plus
-one "serve the song, the band and the room" line) -> **Try it** (simulator) -> Features (`#features`,
-now ONE showcase with tabs; script.js "Feature tabs" hides the other three, whose scenes pause on
-their own) -> How it works + video -> Safety -> Gear (brand line always shown, the full device list
-inside `<details class="gear__all">`) -> FAQ -> Download (install steps inside a "First time
-opening it?" `<details>`) -> Contact. Sam found the page long and "very committed" to read; this cut
-it ~22% on desktop and ~35% on phones. Keep it short, and never church-only (the plan says so):
-"Sunday" wording was made neutral; worship song names in examples are fine.
+Sam: the site felt mechanical, long and texty, the simulator too technical and "committed"; wanted
+something fresh like morningstar.io / apple.com, for people who don't read much. Now: light by default
+(dark via `prefers-color-scheme`), big short headlines, real app screenshots, ~35% shorter.
+Order: hero (headline, one line, Download + Try it, app screenshot in a window frame) -> three stat
+tiles (10 min / Every part / Zero code) -> **Try it** (#try) -> Features bento (#features: song card,
+My presets, send review, tempo, scan/listen, video tile) -> Gear (#gear: brand names, "See every
+device" `<details>`, one-line request form) -> FAQ (#faq) -> Download (dark, install steps in a
+`<details>`, email sign-up) -> footer (contact email + Instagram). Never church-only wording.
+**Screenshots** in `assets/shots/` (`*-light.jpg` / `*-dark.jpg`, swapped with `<picture>`) are taken
+from the app with the tutorial-video demo songs (build its site, serve it, puppeteer at 2x). Retake
+them when the app's screens change.
 
-## Simulator ("Try it", #try)
+## Try it (#try)
 
-`simulator.js` + `simulator.css` (their own `?v=` numbers), section `#try` after How it works. A
-working copy of the app's Setlists screen in dark mode (window frame, top bar, "This week", song
-cards with the MC6 2x3 grid, the section editor with one preset dropdown per pedal), using the app's
-own dark colour tokens scoped under `.app-window`. A "Your pedalboard" dialog picks the pedals (5 of
-7 generic ones, 10 made-up presets each) and starts the clock with the only 8-bit element, the START
-button (Press Start 2P, Google Fonts OFL). Done moves to the next part without sounds; "Send 4 songs
-to MC6" enables once all 18 parts have one and stops the clock; the finish dialog shows the time,
-"Try it now: Download for Mac", Share my time and Play again. Sam's brief: `midiator-simulator.md`;
-2026-09-27 he asked for the app look with only the Start button 8-bit ("if it's bad, scrap it").
-
-The site cursor is now 8-bit: `pedalSvg()` in script.js draws each pedal on a 16x16 grid (shown at
-32x32, hotspot 0 0), still changing on every click; the simulator reuses it through
-`window.midiatorPixelPedal` / `window.midiatorPedals`, so script.js must load first.
+`simulator.js` + `simulator.css`: a playful demo, no clock. Left, a builder: song name (+ quick
+picks), BPM stepper, pedal chips (up to 3 of Drive/Delay/Reverb/Mod/Pitch), a row per part (A-E,
+click the name to cycle names, click a sound chip to cycle that pedal's presets, then "no change"),
+Add part, Shuffle sounds, and the only 8-bit element, the SEND button (Press Start 2P). Right, an
+always-dark pedalboard: an MC6-style controller (top D E F, bottom A B C, F = Tap blinking at the
+BPM) and the pedals, whose screens show the stomped part's presets. The board shows what was SENT;
+edits dim it until Send again. First stomp reveals "That's Midiator." + Download / Start over.
+simulator.js loads before script.js so its Download link gets the .dmg URL too.
 
 ## Forms
 
-Two forms (early-access sign-up and "Pedal or MIDI controller not on the list?") post to
+Two forms (email sign-up in Download, and "Missing something?" in Gear) post to
 FormSubmit at `https://formsubmit.co/midiatorplanet@gmail.com` (Midiator's public address, also in
-the Contact section and footer with Instagram @midiatorplanet). **Never put Sam's personal email in
+the footer with Instagram @midiatorplanet). **Never put Sam's personal email in
 the page.** FormSubmit needs a one-time activation: the first submission emails an activate link to
 that inbox. Forms can't send from a `file://` page.
 
 ## Brand
 
-- Colors: background `#0e100f`, cream text `#fffce1`, brand orange `#f2542d` → `#ffa37d`
-  gradient; accents pink `#fec5fb`, lilac `#9d95ff`, blue `#00bae2`, green `#abff84`.
-- Fonts: Geist and Geist Mono. Logo: `assets/midiator-mark.svg`.
+- Colors (tokens at the top of styles.css): warm off-white `#fbfaf8` / `#f2f0eb` tiles, ink
+  `#16150f`, accent `#c93a15` (dark mode `#ff6b45`), brand `#f2542d` for the logo and the 8-bit
+  button, near-black `#121110` for dark tiles and the Download section. Same palette as the app.
+- Font: Geist. Logo: `assets/midiator-mark.svg`.
 - Voice: short, plain, friendly, for church musicians rather than MIDI nerds. Taglines:
   "MIDI, mediated." and "Setlists, settled."
 

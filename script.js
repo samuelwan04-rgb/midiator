@@ -1,15 +1,13 @@
-document.documentElement.classList.remove("no-js");
+// Midiator website: menu, reveal-on-scroll, forms, download link, video. Plain JS, no libraries.
 
-const reduceMotion = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
-const finePointer = window.matchMedia("(pointer: fine)").matches;
-
-// ---------- Mobile menu ----------
+// ---------- Menu ----------
+const nav = document.querySelector(".nav");
 const toggle = document.querySelector(".nav__toggle");
 const links = document.getElementById("nav-links");
 toggle.addEventListener("click", () => {
-  const open = toggle.getAttribute("aria-expanded") === "true";
-  toggle.setAttribute("aria-expanded", String(!open));
-  links.classList.toggle("open", !open);
+  const open = toggle.getAttribute("aria-expanded") !== "true";
+  toggle.setAttribute("aria-expanded", String(open));
+  links.classList.toggle("open", open);
 });
 links.addEventListener("click", (e) => {
   if (e.target.closest("a")) {
@@ -17,537 +15,40 @@ links.addEventListener("click", (e) => {
     links.classList.remove("open");
   }
 });
+const onScroll = () => nav.classList.toggle("is-scrolled", window.scrollY > 8);
+window.addEventListener("scroll", onScroll, { passive: true });
+onScroll();
+
+// ---------- Reveal on scroll ----------
+if ("IntersectionObserver" in window) {
+  const io = new IntersectionObserver(
+    (entries) => entries.forEach((e) => {
+      if (e.isIntersecting) {
+        e.target.classList.add("in");
+        io.unobserve(e.target);
+      }
+    }),
+    { rootMargin: "0px 0px -8% 0px", threshold: 0.08 }
+  );
+  document.querySelectorAll(".reveal").forEach((el) => io.observe(el));
+} else {
+  document.documentElement.classList.add("no-io");
+}
 
 document.getElementById("year").textContent = new Date().getFullYear();
 
-// ---------- Split text ----------
-// Wraps each word in a mask (.w) holding one or more pieces (.c) that animate.
-// Gradient words get the gradient on each piece, offset so it still reads as one sweep.
-function splitText(el, byChar) {
-  const label = el.textContent.replace(/\s+/g, " ").trim();
-  let i = 0;
-  const gradHosts = [];
-
-  const walk = (node, inGrad) => {
-    [...node.childNodes].forEach((child) => {
-      if (child.nodeType === Node.TEXT_NODE) {
-        const frag = document.createDocumentFragment();
-        child.textContent.split(/(\s+)/).forEach((part) => {
-          if (!part) return;
-          if (/^\s+$/.test(part)) {
-            frag.append(" ");
-            return;
-          }
-          const word = document.createElement("span");
-          word.className = "w";
-          (byChar ? [...part] : [part]).forEach((piece) => {
-            const c = document.createElement("span");
-            c.className = inGrad ? "c grad" : "c";
-            c.textContent = piece;
-            c.style.setProperty("--i", i++);
-            word.append(c);
-          });
-          frag.append(word);
-        });
-        child.replaceWith(frag);
-      } else if (child.nodeType === Node.ELEMENT_NODE) {
-        const grad = child.classList.contains("grad");
-        if (grad) {
-          child.classList.replace("grad", "grad-host");
-          gradHosts.push(child);
-        }
-        walk(child, inGrad || grad);
-      }
-    });
-  };
-
-  walk(el, false);
-  el.setAttribute("aria-label", label);
-  [...el.children].forEach((child) => child.setAttribute("aria-hidden", "true"));
-  el.classList.add("split");
-  if (byChar) el.classList.add("split--chars");
-  return gradHosts;
-}
-
-const gradHosts = [];
-function alignGradients() {
-  gradHosts.forEach((host) => {
-    const width = host.offsetWidth;
-    host.querySelectorAll(".c").forEach((c) => {
-      c.style.backgroundSize = `${width}px 100%`;
-      c.style.backgroundPosition = `${-c.offsetLeft}px 0`;
-    });
-  });
-}
-
-const splitEls = document.querySelectorAll("[data-split]");
-const scrubEls = document.querySelectorAll("[data-scrub]");
-
-if (!reduceMotion) {
-  splitEls.forEach((el) => gradHosts.push(...splitText(el, el.dataset.split === "chars")));
-  scrubEls.forEach((el) => {
-    gradHosts.push(...splitText(el, false));
-    el.classList.remove("split");
-    el.classList.add("scrub");
-  });
-  alignGradients();
-  document.fonts?.ready.then(alignGradients);
-  window.addEventListener("resize", alignGradients);
-}
-
-// Eyebrows: the braces start closed and open to reveal their words.
-const eyebrows = reduceMotion
-  ? []
-  : [...document.querySelectorAll(".bracket")].filter((el) => !el.closest(".footer") && /^\{.*\}$/.test(el.textContent.trim()));
-eyebrows.forEach((el) => {
-  const words = el.textContent.trim().slice(1, -1).trim();
-  const part = (cls, text) => Object.assign(document.createElement("span"), { className: cls, textContent: text });
-  el.setAttribute("aria-label", `{ ${words} }`);
-  el.replaceChildren(part("br br--open", "{"), part("br__words", words), part("br br--close", "}"));
-  [...el.children].forEach((c) => c.setAttribute("aria-hidden", "true"));
-  el.classList.add("brackets");
-});
-function measureEyebrows() {
-  eyebrows.forEach((el) => el.style.setProperty("--half", `${el.querySelector(".br__words").offsetWidth / 2}px`));
-}
-measureEyebrows();
-document.fonts?.ready.then(measureEyebrows);
-window.addEventListener("resize", measureEyebrows);
-
-// ---------- Reveal on scroll ----------
-const toReveal = [...document.querySelectorAll(".reveal"), ...document.querySelectorAll(".split")];
-
-// stagger cards that share a grid
-document.querySelectorAll(".gear__grid .reveal").forEach((el, i) => {
-  el.style.setProperty("--d", `${(i % 3) * 0.12}s`);
-});
-
-if (reduceMotion || !("IntersectionObserver" in window)) {
-  toReveal.forEach((el) => el.classList.add("is-in"));
-} else {
-  const io = new IntersectionObserver(
-    (entries) => {
-      entries.forEach((entry) => {
-        if (entry.isIntersecting) {
-          entry.target.classList.add("is-in");
-          io.unobserve(entry.target);
-        }
-      });
-    },
-    { rootMargin: "0px 0px -12% 0px" }
-  );
-  toReveal.forEach((el) => {
-    if (el.closest(".hero")) return;
-    io.observe(el);
-  });
-
-  const heroTitle = document.querySelector(".hero .display");
-  requestAnimationFrame(() => setTimeout(() => heroTitle.classList.add("is-in"), 80));
-  const heroEyebrow = document.querySelector(".hero .bracket");
-  setTimeout(() => heroEyebrow?.classList.add("is-in"), 1100);
-}
-
-// ---------- Scroll-linked effects ----------
-const hero = document.querySelector(".hero");
-const root = document.documentElement;
-let ticking = false;
-
-function onScroll() {
-  const y = window.scrollY;
-  const vh = window.innerHeight;
-  const max = root.scrollHeight - vh;
-  root.style.setProperty("--scroll", max > 0 ? (y / max).toFixed(4) : 0);
-
-  if (!reduceMotion) {
-    const p = Math.min(1, y / hero.offsetHeight);
-    hero.style.setProperty("--p", p.toFixed(4));
-
-    scrubEls.forEach((el) => {
-      const r = el.getBoundingClientRect();
-      const progress = (vh * 0.9 - r.top) / (vh * 0.55);
-      const pieces = el.querySelectorAll(".c");
-      const lit = Math.round(Math.max(0, Math.min(1, progress)) * pieces.length);
-      pieces.forEach((c, i) => c.classList.toggle("lit", i < lit));
-    });
-  }
-  ticking = false;
-}
-window.addEventListener(
-  "scroll",
-  () => {
-    if (!ticking) {
-      ticking = true;
-      requestAnimationFrame(onScroll);
-    }
-  },
-  { passive: true }
+// ---------- Video ----------
+const videoDialog = document.getElementById("video");
+const video = videoDialog.querySelector("video");
+document.querySelectorAll("[data-video]").forEach((b) =>
+  b.addEventListener("click", () => {
+    videoDialog.showModal();
+    video.play().catch(() => {});
+  })
 );
-onScroll();
-
-// ---------- Pointer effects ----------
-if (!reduceMotion && finePointer) {
-  const mc6 = document.querySelector(".mc6");
-  hero.addEventListener("pointermove", (e) => {
-    const r = hero.getBoundingClientRect();
-    const x = (e.clientX - r.left) / r.width - 0.5;
-    const y = (e.clientY - r.top) / r.height - 0.5;
-    mc6.style.setProperty("--ry", `${x * 14}deg`);
-    mc6.style.setProperty("--rx", `${-y * 10}deg`);
-  });
-  hero.addEventListener("pointerleave", () => {
-    mc6.style.setProperty("--ry", "0deg");
-    mc6.style.setProperty("--rx", "0deg");
-  });
-
-  document.querySelectorAll(".brand-card").forEach((card) => {
-    card.addEventListener("pointermove", (e) => {
-      const r = card.getBoundingClientRect();
-      card.style.setProperty("--mx", `${e.clientX - r.left}px`);
-      card.style.setProperty("--my", `${e.clientY - r.top}px`);
-    });
-  });
-}
-
-// ---------- Pedal cursors ----------
-// Cartoon pedals loosely inspired by the gear list: colors and shapes only,
-// no names, logos or real layouts.
-const pedals = [
-  { body: "#5b6170", wide: 1, screen: 1, knobs: 2, sw: 4, knob: "#c9ccd3" }, // big modeler
-  { body: "#34363f", wide: 1, screen: 1, knobs: 3, sw: 3, knob: "#9aa0ab" }, // small modeler
-  { body: "#7fb2e5", wide: 1, screen: 1, knobs: 4, sw: 3, knob: "#f4f6fa" }, // blue delay
-  { body: "#b9a4ff", wide: 1, screen: 1, knobs: 4, sw: 3, knob: "#f4f6fa" }, // purple reverb
-  { body: "#8fe3b0", wide: 1, screen: 1, knobs: 4, sw: 3, knob: "#f4f6fa" }, // green modulation
-  { body: "#44444c", wide: 1, screen: 1, knobs: 3, sw: 3, knob: "#ff9a6a" }, // multi-effect
-  { body: "#f1eee4", wide: 1, screen: 1, knobs: 4, sw: 3, knob: "#44464d" }, // white delay
-  { body: "#6ec6ff", wide: 1, screen: 1, knobs: 4, sw: 3, knob: "#26303b" }, // sky reverb
-  { body: "#ffb0c8", wide: 1, screen: 1, knobs: 4, sw: 3, knob: "#3b2a33" }, // pink modulation
-  { body: "#d9dde3", wide: 1, screen: 0, knobs: 4, sw: 3, knob: "#ff8a5c" }, // silver delay
-  { body: "#c8ccd2", wide: 1, screen: 0, knobs: 4, sw: 3, knob: "#5aa9ff" }, // silver reverb
-  { body: "#ece6d8", wide: 1, screen: 1, knobs: 4, sw: 3, knob: "#8a7f6a" }, // cream delay
-  { body: "#23252b", wide: 1, screen: 1, knobs: 4, sw: 3, knob: "#e7e1cf" }, // black reverb
-  { body: "#3f4652", wide: 1, screen: 0, knobs: 4, sw: 2, knob: "#ffd36e" }, // slate stereo
-  { body: "#f5d76e", wide: 0, screen: 0, knobs: 3, sw: 2, knob: "#2e2a1f" }, // yellow stomp delay
-  { body: "#ff9e7a", wide: 0, screen: 0, knobs: 3, sw: 2, knob: "#2e2a1f" }, // coral stomp reverb
-  { body: "#ffd6f0", wide: 1, screen: 0, knobs: 4, sw: 2, knob: "#9d95ff" }, // pastel looper
-  { body: "#ffe08a", wide: 1, screen: 0, knobs: 4, sw: 2, knob: "#ff6b6b" }, // sunny multi
-];
-
-// 8-bit pedals: each variant drawn on a 16x16 pixel grid (shown at 32x32), with a pixel arrow at
-// the top-left corner where the click lands. "happy" = hovering something clickable: the eyes
-// smile, the footswitches light up and the LED turns red.
-function pedalSvg(p, happy) {
-  const ink = "#15171a";
-  const cream = "#fffce1";
-  const px = [];
-  const dot = (x, y, c) => px.push(`<rect x="${x}" y="${y}" width="1" height="1" fill="${c}"/>`);
-  const box = (x, y, w, h, c) => px.push(`<rect x="${x}" y="${y}" width="${w}" height="${h}" fill="${c}"/>`);
-  // Body with a cream outline and a darker bottom edge.
-  const [x, y, w, h] = p.wide ? [2, 4, 13, 11] : [4, 2, 10, 13];
-  box(x, y, w, h, cream);
-  box(x + 1, y + 1, w - 2, h - 2, p.body);
-  box(x + 1, y + h - 2, w - 2, 1, "rgba(0,0,0,.25)");
-  // Knobs along the top.
-  const spread = (n, pad) => Array.from({ length: n }, (_, i) => Math.round(x + pad + ((w - 1 - pad * 2) * (i + 0.5)) / n));
-  spread(p.knobs, 2).forEach((kx) => dot(kx, y + 2, p.knob));
-  // Face (on a little screen for the modelers).
-  const cx = Math.floor(x + w / 2);
-  const fy = y + Math.floor(h / 2);
-  const faceInk = p.screen ? "#abff84" : ink;
-  if (p.screen) box(cx - 3, fy - 2, 6, 4, "#10160f");
-  if (happy) {
-    for (const ex of [cx - 2, cx + 1]) { dot(ex - 1, fy - 1, faceInk); dot(ex, fy - 2, faceInk); dot(ex + 1, fy - 1, faceInk); }
-  } else {
-    dot(cx - 2, fy - 1, faceInk);
-    dot(cx + 1, fy - 1, faceInk);
-  }
-  dot(cx - 1, fy + 1, faceInk);
-  dot(cx, fy + 1, faceInk);
-  if (!p.screen) { dot(cx - 3, fy, "#ff7aa8"); dot(cx + 2, fy, "#ff7aa8"); }
-  // LED and footswitches.
-  dot(x + w - 3, y + h - 5, happy ? "#ff3b2f" : "#5a2a22");
-  spread(p.sw, 2).forEach((sx) => dot(sx, y + h - 3, happy ? cream : "#8d8d84"));
-  // Pixel arrow: the hotspot is its top-left pixel.
-  [[0, 0], [1, 0], [2, 0], [3, 0], [0, 1], [1, 1], [2, 1], [0, 2], [1, 2], [0, 3]].forEach(([ax, ay]) => dot(ax, ay, cream));
-  [[4, 0], [3, 1], [2, 2], [1, 3], [0, 4]].forEach(([ax, ay]) => dot(ax, ay, ink));
-  return `<svg xmlns="http://www.w3.org/2000/svg" width="32" height="32" viewBox="0 0 16 16" shape-rendering="crispEdges">${px.join("")}</svg>`;
-}
-// The simulator (simulator.js) draws its pedals with the same pixel art.
-window.midiatorPixelPedal = pedalSvg;
-window.midiatorPedals = pedals;
-
-const cursorUrl = (svg) => `url("data:image/svg+xml,${encodeURIComponent(svg)}") 0 0`;
-let pedalIndex = Math.floor(Math.random() * pedals.length);
-
-function usePedal(i) {
-  const p = pedals[i];
-  root.style.setProperty("--cur", `${cursorUrl(pedalSvg(p, false))}, auto`);
-  root.style.setProperty("--cur-hover", `${cursorUrl(pedalSvg(p, true))}, pointer`);
-}
-
-if (finePointer) {
-  usePedal(pedalIndex);
-  // a new pedal on every click
-  window.addEventListener("pointerdown", () => {
-    pedalIndex = (pedalIndex + 1 + Math.floor(Math.random() * (pedals.length - 1))) % pedals.length;
-    usePedal(pedalIndex);
-  });
-}
-
-// ---------- Hero controller ----------
-const sections = [
-  "BigSky 04A · TimeLine off",
-  "TimeLine 12B · BigSky 04A",
-  "TimeLine 12B · BigSky 71C",
-  "BigSky 71C · LVX PC 17",
-  "BigSky 04A · delays off",
-];
-const switches = [...document.querySelectorAll(".mc6 .sw[data-i]")].sort(
-  (a, b) => a.dataset.i - b.dataset.i
-);
-const tap = document.querySelector(".mc6 .sw--tempo");
-const msgText = document.querySelector(".mc6__msgtext");
-const msgLed = document.querySelector(".mc6__led");
-let current = 1;
-switches[current].classList.add("is-on");
-
-function restart(el, cls) {
-  el.classList.remove(cls);
-  void el.offsetWidth;
-  el.classList.add(cls);
-}
-
-if (!reduceMotion) {
-  setInterval(() => {
-    switches[current].classList.remove("is-on");
-    current = (current + 1) % switches.length;
-    const sw = switches[current];
-    sw.classList.add("is-on", "press");
-    setTimeout(() => sw.classList.remove("press"), 160);
-    msgText.textContent = sections[current];
-    restart(msgText, "flash");
-    restart(msgLed, "blink");
-  }, 1800);
-
-  setInterval(() => {
-    tap.classList.add("is-tap");
-    setTimeout(() => tap.classList.remove("is-tap"), 120);
-  }, 60000 / 72);
-}
-
-// ---------- Feature scenes ----------
-// Each scene loops while its drawing is on screen and pauses when it isn't.
-function scene(el, setup, loop) {
-  if (reduceMotion || !el) return;
-  el.classList.add("anim");
-  setup?.();
-  let visible = false;
-  let resume = null;
-  new IntersectionObserver(
-    ([entry]) => {
-      visible = entry.isIntersecting;
-      if (visible && resume) {
-        resume();
-        resume = null;
-      }
-    },
-    { threshold: 0.3 }
-  ).observe(el);
-  const wait = async (ms) => {
-    await new Promise((r) => setTimeout(r, ms));
-    if (!visible) await new Promise((r) => (resume = r));
-  };
-  (async () => {
-    await wait(0);
-    await wait(900);
-    for (;;) await loop(wait);
-  })();
-}
-
-async function typeInto(el, text, wait, speed = 28) {
-  for (let i = 1; i <= text.length; i++) {
-    el.textContent = text.slice(0, i);
-    await wait(speed);
-  }
-}
-
-function flip(container, mutate) {
-  const kids = [...container.children];
-  const before = new Map(kids.map((k) => [k, k.getBoundingClientRect().top]));
-  mutate();
-  kids.forEach((k) => {
-    const dy = before.get(k) - k.getBoundingClientRect().top;
-    if (dy) {
-      k.animate([{ transform: `translateY(${dy}px)` }, { transform: "none" }], {
-        duration: 700,
-        easing: "cubic-bezier(.2,.8,.2,1)",
-      });
-    }
-  });
-}
-
-function setStatus(el, cls, text) {
-  el.className = `status ${cls}`;
-  el.textContent = text;
-}
-
-// Setlists: play through a song's sections, reorder two songs, resync.
-const setlistEl = document.querySelector('[data-scene="setlist"]');
-scene(setlistEl, null, async (wait) => {
-  const cells = [...setlistEl.querySelectorAll(".minigrid [data-o]")].sort(
-    (a, b) => a.dataset.o - b.dataset.o
-  );
-  for (const cell of cells) {
-    cells.forEach((c) => c.classList.toggle("on", c === cell));
-    await wait(750);
-  }
-  cells.forEach((c) => c.classList.toggle("on", c.dataset.o === "1"));
-
-  const list = setlistEl.querySelector(".songs");
-  const cards = [...list.children];
-  const moving = cards[2];
-  moving.classList.add("lift");
-  flip(list, () => list.insertBefore(moving, cards[1]));
-  [...list.children].forEach((card, i) => {
-    card.querySelector(".bank").textContent = 23 + i;
-  });
-  await wait(700);
-  moving.classList.remove("lift");
-
-  const statuses = [...list.children].slice(1).map((c) => c.querySelector(".status"));
-  statuses.forEach((s) => setStatus(s, "status--new", "Bank changed"));
-  await wait(1300);
-  statuses.forEach((s) => setStatus(s, "status--busy", "Sending"));
-  await wait(1500);
-  statuses.forEach((s) => setStatus(s, "status--ok", "Synced"));
-  await wait(1800);
-});
-
-// Songs: a cursor adds two songs to the setlist, then the list resets.
-const songsEl = document.querySelector('[data-scene="songs"]');
-scene(songsEl, null, async (wait) => {
-  const cursor = songsEl.querySelector(".cursor");
-  const chips = [...songsEl.querySelectorAll("[data-bank]")];
-  const box = songsEl.getBoundingClientRect();
-  const pedal = pedals[Math.floor(Math.random() * pedals.length)];
-  cursor.innerHTML = pedalSvg(pedal, false);
-  cursor.style.transform = `translate(${box.width * 0.35}px, ${box.height + 20}px)`;
-  cursor.classList.add("show");
-  await wait(300);
-
-  for (const chip of chips) {
-    const r = chip.getBoundingClientRect();
-    const b = songsEl.getBoundingClientRect();
-    cursor.style.transform = `translate(${r.left - b.left + r.width * 0.5}px, ${r.top - b.top + r.height * 0.4}px)`;
-    await wait(950);
-    restart(cursor, "click");
-    cursor.innerHTML = pedalSvg(pedal, true);
-    setTimeout(() => (cursor.innerHTML = pedalSvg(pedal, false)), 500);
-    chip.className = "chip c-lilac-bg";
-    chip.textContent = `In setlist · bank ${chip.dataset.bank}`;
-    restart(chip, "pop");
-    await wait(1100);
-  }
-  cursor.style.transform = `translate(${box.width + 30}px, ${box.height * 0.5}px)`;
-  await wait(2200);
-  cursor.classList.remove("show");
-  chips.forEach((chip) => {
-    chip.className = "chip chip--ghost";
-    chip.textContent = "+ Add to setlist";
-  });
-  await wait(900);
-});
-
-// My presets: rows slide in, then each preset shows the MIDI it becomes.
-const presetsEl = document.querySelector('[data-scene="presets"]');
-const presetRows = presetsEl ? [...presetsEl.querySelectorAll(".trow")] : [];
-let presetsShown = false;
-scene(presetsEl, null, async (wait) => {
-  const out = presetsEl.querySelector(".midi-out__text");
-  const dot = presetsEl.querySelector(".midi-out__dot");
-  if (!presetsShown) {
-    out.textContent = "";
-    for (const row of presetRows) {
-      row.classList.add("show");
-      await wait(120);
-    }
-    presetsShown = true;
-    await wait(500);
-  }
-  for (const row of presetRows) {
-    presetRows.forEach((r) => r.classList.toggle("active", r === row));
-    restart(dot, "blink");
-    await typeInto(out, `${row.querySelector("strong").textContent} → ${row.dataset.msg}`, wait, 22);
-    await wait(1300);
-  }
-  presetRows.forEach((r) => r.classList.remove("active"));
-  await wait(600);
-});
-
-// Scan controller: count through the banks, find presets, tick them, add them.
-const scanEl = document.querySelector('[data-scene="scan"]');
-scene(scanEl, null, async (wait) => {
-  const status = scanEl.querySelector(".scan__status");
-  const bar = scanEl.querySelector(".scan__bar span");
-  const rows = [...scanEl.querySelectorAll(".scan__rows li")];
-  const add = scanEl.querySelector(".scan__add");
-  const foundAt = [1, 1, 1, 3];
-
-  rows.forEach((r) => r.classList.remove("show", "ticked"));
-  add.classList.remove("ready", "done");
-  add.textContent = "Add 3 to My presets";
-  for (let bank = 1; bank <= 30; bank += bank < 6 ? 1 : 4) {
-    status.textContent = `Reading bank ${bank} of 30…`;
-    bar.style.transform = `scaleX(${bank / 30})`;
-    rows.forEach((r, i) => foundAt[i] <= bank && r.classList.add("show"));
-    await wait(bank < 6 ? 420 : 160);
-  }
-  bar.style.transform = "scaleX(1)";
-  rows.forEach((r) => r.classList.add("show"));
-  status.textContent = "Found 4 pedal presets, 1 already in My presets.";
-  await wait(600);
-  for (const row of rows.filter((r) => !r.classList.contains("is-known"))) {
-    row.classList.add("ticked");
-    await wait(280);
-  }
-  add.classList.add("ready");
-  await wait(900);
-  add.classList.add("press");
-  await wait(160);
-  add.classList.remove("press");
-  add.classList.add("done");
-  add.textContent = "✓ Added 3 to My presets";
-  await wait(2600);
-});
-
-// Safety: the review fills in row by row, then writes and verifies.
-const reviewEl = document.querySelector('[data-scene="review"]');
-scene(reviewEl, null, async (wait) => {
-  const rows = [...reviewEl.querySelectorAll(".review__rows li")];
-  const bar = reviewEl.querySelector(".review__bar");
-  const status = reviewEl.querySelector(".review__status");
-  const btn = reviewEl.querySelector(".review__btn");
-
-  rows.forEach((r) => r.classList.remove("show"));
-  bar.classList.remove("run");
-  status.classList.remove("ok");
-  status.textContent = "Reading banks 23–25…";
-  await wait(700);
-  for (const row of rows) {
-    row.classList.add("show");
-    await wait(380);
-  }
-  status.textContent = "Review, then write.";
-  await wait(1000);
-  btn.classList.add("press");
-  await wait(160);
-  btn.classList.remove("press");
-  status.textContent = "Writing and reading back…";
-  bar.classList.add("run");
-  await wait(1900);
-  status.textContent = "✓ Written and verified";
-  status.classList.add("ok");
-  await wait(3000);
-});
+videoDialog.querySelector(".video__close").addEventListener("click", () => videoDialog.close());
+videoDialog.addEventListener("click", (e) => { if (e.target === videoDialog) videoDialog.close(); });
+videoDialog.addEventListener("close", () => video.pause());
 
 // ---------- Forms ----------
 // Both forms send through FormSubmit, which emails each one on to the address in the form's action.
@@ -555,10 +56,7 @@ const formTypes = {
   gear: {
     subject: (d) => `Midiator gear request: ${d.pedal}`,
     title: "Got it, thanks!",
-    message: (d) =>
-      d.email
-        ? `${d.pedal} is on our list. We'll email you when it works with Midiator.`
-        : `${d.pedal} is on our list. Check back soon.`,
+    message: (d) => (d.email ? `${d.pedal} is on our list. We'll email you when it's in.` : `${d.pedal} is on our list. Check back soon.`),
     again: "Request another one",
   },
   access: {
@@ -572,12 +70,10 @@ function wireForm(form) {
   const type = formTypes[form.dataset.form];
   const note = form.querySelector(".request__note");
   const fields = [...form.children];
-
   const fallback = (message) => {
     note.className = "request__note error";
     note.textContent = message;
   };
-
   const showThanks = (data) => {
     const done = document.createElement("div");
     done.className = "request__done";
@@ -604,23 +100,14 @@ function wireForm(form) {
   form.addEventListener("submit", async (e) => {
     e.preventDefault();
     if ([...form.querySelectorAll("[required]")].some((input) => !input.value.trim())) return;
-    const data = Object.fromEntries(
-      [...new FormData(form)].map(([k, v]) => [k, typeof v === "string" ? v.trim() : v])
-    );
-    const subject = type.subject(data);
-    data._subject = subject;
-
+    const data = Object.fromEntries([...new FormData(form)].map(([k, v]) => [k, typeof v === "string" ? v.trim() : v]));
+    data._subject = type.subject(data);
     // FormSubmit rejects pages opened straight from disk (file://), so say so instead of failing.
-    if (location.protocol === "file:") {
-      fallback("This form only sends once the site is online, not when the file is opened from your computer.");
-      return;
-    }
-
+    if (location.protocol === "file:") return fallback("This form only sends once the site is online.");
     const button = form.querySelector("button[type=submit]");
     button.disabled = true;
     note.className = "request__note";
     note.textContent = "Sending…";
-
     try {
       const res = await fetch(form.action.replace("formsubmit.co/", "formsubmit.co/ajax/"), {
         method: "POST",
@@ -628,13 +115,10 @@ function wireForm(form) {
         body: JSON.stringify(data),
       });
       const json = await res.json().catch(() => ({}));
-      if (res.ok && String(json.success) === "true") {
-        showThanks(data);
-      } else if (/activat/i.test(json.message || "")) {
+      if (res.ok && String(json.success) === "true") showThanks(data);
+      else if (/activat/i.test(json.message || "")) {
         // First submission from a new web address: FormSubmit emails the site owner an activation link.
-        note.className = "request__note";
-        note.textContent =
-          "Almost there: the form is waiting to be activated. Check the site owner's inbox for FormSubmit's activation email, click the link, then send this again.";
+        note.textContent = "Almost there: this form is waiting to be activated. Please try again later.";
       } else {
         console.warn("FormSubmit:", res.status, json.message);
         fallback("That didn't go through. Try again in a moment.");
@@ -647,70 +131,18 @@ function wireForm(form) {
     }
   });
 }
-
 document.querySelectorAll("form[data-form]").forEach(wireForm);
 
 // ---------- Download ----------
-// Point the download button at the newest release's .dmg; without it (offline, rate-limited)
-// the button keeps linking to the latest release page, which has the same file.
-fetch("https://api.github.com/repos/samuelwan04-rgb/midiator/releases/latest", {
-  headers: { Accept: "application/vnd.github+json" },
-})
+// Point the download buttons at the newest release's .dmg; without it (offline, rate-limited)
+// they keep linking to the latest release page, which has the same file.
+fetch("https://api.github.com/repos/samuelwan04-rgb/midiator/releases/latest", { headers: { Accept: "application/vnd.github+json" } })
   .then((res) => (res.ok ? res.json() : Promise.reject(res.status)))
   .then((release) => {
     const dmg = release.assets.find((a) => a.name.endsWith(".dmg"));
     if (!dmg) return;
     document.querySelectorAll("[data-download]").forEach((a) => (a.href = dmg.browser_download_url));
     const version = release.tag_name.replace(/^v/, "");
-    document.querySelector(".download__meta").textContent =
-      `Version ${version} · ${Math.round(dmg.size / 1e6)} MB · Apple chip and Intel`;
+    document.querySelector(".download__meta").textContent = `Version ${version} · ${Math.round(dmg.size / 1e6)} MB · Apple chip and Intel`;
   })
   .catch(() => {});
-
-// ---------- Performance ----------
-// Pause looping decoration (drifting glows, marquee, bobbing MC6) while it's off screen.
-if ("IntersectionObserver" in window) {
-  const decor = new IntersectionObserver((entries) => {
-    entries.forEach((e) => e.target.classList.toggle("is-offscreen", !e.isIntersecting));
-  });
-  document.querySelectorAll(".hero, .marquee, .mock").forEach((el) => decor.observe(el));
-}
-
-// Tutorial video: pause it when it's scrolled away, and turn off the menu's
-// live blur while it plays (re-blurring every video frame is what made scrolling heavy).
-const demo = document.querySelector(".demo__video");
-if (demo) {
-  const setPlaying = () => document.body.classList.toggle("video-playing", !demo.paused && !demo.ended);
-  ["play", "pause", "ended"].forEach((t) => demo.addEventListener(t, setPlaying));
-  if ("IntersectionObserver" in window) {
-    new IntersectionObserver(
-      ([e]) => { if (!e.isIntersecting && !demo.paused) demo.pause(); },
-      { threshold: 0.25 }
-    ).observe(demo);
-  }
-}
-
-// ---------- Feature tabs ----------
-// One showcase with four views instead of four screens stacked. Hidden views pause their
-// animations by themselves (their scene only runs while it's on screen).
-const tabs = [...document.querySelectorAll(".feature-tabs [data-tab]")];
-const panels = [...document.querySelectorAll(".features .feature")];
-function showTab(i, focus) {
-  tabs.forEach((t, k) => {
-    t.setAttribute("aria-selected", String(k === i));
-    t.tabIndex = k === i ? 0 : -1;
-  });
-  panels.forEach((p, k) => (p.hidden = k !== i));
-  panels[i]?.querySelectorAll(".reveal, .split").forEach((el) => el.classList.add("is-in"));
-  if (focus) tabs[i].focus();
-}
-tabs.forEach((t, i) => {
-  t.addEventListener("click", () => showTab(i));
-  t.addEventListener("keydown", (e) => {
-    if (e.key === "ArrowRight" || e.key === "ArrowLeft") {
-      e.preventDefault();
-      showTab((i + (e.key === "ArrowRight" ? 1 : tabs.length - 1)) % tabs.length, true);
-    }
-  });
-});
-if (tabs.length) showTab(0);

@@ -1,42 +1,41 @@
-// Midiator simulator: a working copy of the app's Setlists screen, against a 10-minute clock.
-// Plain JavaScript, no libraries. Everything is drawn inside <div id="sim">.
+// "Try it": a playful, pick-your-own demo of what Midiator does. Build one song (name, BPM, your
+// pedals, a sound per part), press SEND, then stomp the switches and watch the pedals change.
+// No clock, no score. Plain JavaScript, everything drawn inside <div id="sim">.
 (() => {
   const root = document.getElementById("sim");
   if (!root) return;
 
-  const TEN_MINUTES = 10 * 60 * 1000;
-  const SITE = "https://samuelwan04-rgb.github.io/midiator/";
-
-  // Example pedals, each with ten "saved" presets. Generic names, like sounds people really save.
+  // Example pedals with sounds people really save. Short names, so they fit a pedal's screen.
   const PEDALS = [
-    { id: "drive", name: "Drive", presets: ["Clean boost", "Edge of breakup", "Light crunch", "Mid gain", "Plexi push", "Tape drive", "Warm fuzz", "Big lead", "Transparent", "Boost +6"] },
-    { id: "delay", name: "Delay", presets: ["Dotted 8th", "Quarter note", "Slapback", "Ambient wash", "Tape echo", "Ping pong", "Long trails", "Reverse swell", "8th triplet", "Modulated"] },
-    { id: "reverb", name: "Reverb", presets: ["Small room", "Plate", "Big hall", "Shimmer pad", "Cathedral", "Spring", "Cloud", "Bloom", "Swell", "Ambient"] },
-    { id: "mod", name: "Modulation", presets: ["Slow chorus", "Vibe", "Rotary", "Tremolo", "Harmonic trem", "Phaser", "Flanger", "Detune", "Leslie", "Subtle shimmer"] },
-    { id: "pitch", name: "Pitch", presets: ["Octave up", "Octave down", "Harmony 3rd", "Harmony 5th", "Pad synth", "Swell synth", "Detune wide", "Whammy up", "Sub octave", "Freeze pad"] },
-    { id: "comp", name: "Compressor", presets: ["Light squash", "Country snap", "Sustain", "Parallel", "Soft knee", "Always on", "Clean glue", "Funk", "Limiter", "Bloom"] },
-    { id: "looper", name: "Looper", presets: ["Record", "Overdub", "Half speed", "Reverse", "Play once", "Fade out", "Stop", "Undo", "Loop A", "Loop B"] },
+    { id: "drive", name: "Drive", color: "#e9b949", presets: ["Clean boost", "Edge of breakup", "Light crunch", "Mid gain", "Big lead", "Warm fuzz"] },
+    { id: "delay", name: "Delay", color: "#4aa3df", presets: ["Dotted 8th", "Quarter note", "Slapback", "Ambient wash", "Tape echo", "Reverse swell"] },
+    { id: "reverb", name: "Reverb", color: "#9b7fe6", presets: ["Small room", "Plate", "Big hall", "Shimmer pad", "Cathedral", "Cloud"] },
+    { id: "mod", name: "Mod", color: "#5cc38a", presets: ["Slow chorus", "Vibe", "Rotary", "Tremolo", "Phaser", "Subtle detune"] },
+    { id: "pitch", name: "Pitch", color: "#f07fa3", presets: ["Octave up", "Octave down", "Harmony 3rd", "Pad synth", "Freeze pad", "Sub octave"] },
   ];
-  const START_RIG = ["drive", "delay", "reverb", "mod", "pitch"];
+  const PART_NAMES = ["Intro", "Verse", "Pre-chorus", "Chorus", "Bridge", "Instrumental", "Tag", "Outro"];
+  const SONGS = ["Holy Forever", "Way Maker", "Build My Life", "Gratitude", "Firm Foundation"];
+  const LETTERS = ["A", "B", "C", "D", "E"];
+  const MAX_PARTS = 5; // switches A-E; F is Tap tempo
 
-  // A normal week: 4 songs, 18 parts, laid out on an MC6 like the app does (bottom A B C, top D E F).
-  const SETLIST = [
-    { title: "Holy Forever", bpm: 72, parts: ["Intro", "Verse", "Chorus", "Bridge", "Outro"] },
-    { title: "Goodness of God", bpm: 63, parts: ["Verse", "Chorus", "Bridge", "Tag"] },
-    { title: "Great Are You Lord", bpm: 76, parts: ["Intro", "Verse", "Chorus", "Bridge"] },
-    { title: "Way Maker", bpm: 68, parts: ["Verse", "Chorus", "Bridge", "Tag", "Outro"] },
-  ];
-  const FIRST_BANK = 23;
-  const LETTERS = ["A", "B", "C", "D", "E", "F"];
-  const ORDER = [3, 4, 5, 0, 1, 2]; // top row first on screen, like the hardware
+  // A song that already sounds good, so the first thing a visitor sees makes sense.
+  const START = {
+    title: "Holy Forever",
+    bpm: 72,
+    rig: ["drive", "delay", "reverb"],
+    parts: [
+      { name: "Intro", picks: { delay: 3, reverb: 3 } },
+      { name: "Verse", picks: { drive: 0, delay: 1, reverb: 1 } },
+      { name: "Chorus", picks: { drive: 2, delay: 0, reverb: 2 } },
+      { name: "Bridge", picks: { drive: 4, delay: 0, reverb: 4 } },
+    ],
+  };
 
-  let rig = [...START_RIG];
-  let picks = []; // picks[song][part] = { pedalId: presetIndex }
-  let open = null; // { song, part } being edited
-  let startedAt = 0;
-  let finishedIn = 0;
-  let timer = null;
-  let state = "intro";
+  let song = structuredClone(START);
+  let sent = null; // snapshot of the song as last sent to the board
+  let live = null; // index of the switch last stomped
+  let stomped = false;
+  let tapTimer = null;
 
   const el = (tag, props = {}, ...children) => {
     const node = document.createElement(tag);
@@ -44,6 +43,7 @@
       if (v === null || v === undefined || v === false) continue;
       if (k === "class") node.className = v;
       else if (k === "text") node.textContent = v;
+      else if (k === "style") node.style.cssText = v;
       else if (k.startsWith("on")) node.addEventListener(k.slice(2), v);
       else node.setAttribute(k, v === true ? "" : v);
     }
@@ -51,230 +51,220 @@
     return node;
   };
   const pedal = (id) => PEDALS.find((p) => p.id === id);
-  const clock = (ms) => {
-    const s = Math.max(0, Math.floor(ms / 1000));
-    return `${Math.floor(s / 60)}:${String(s % 60).padStart(2, "0")}`;
-  };
-  const spoken = (ms) => {
-    const s = Math.round(ms / 1000);
-    const m = Math.floor(s / 60);
-    return m ? `${m} min ${s % 60} s` : `${s} s`;
-  };
-  const total = SETLIST.reduce((n, s) => n + s.parts.length, 0);
-  const isDone = (s, p) => picks[s] && Object.keys(picks[s][p] || {}).length > 0;
-  const doneCount = () => SETLIST.reduce((n, s, i) => n + s.parts.filter((_, p) => isDone(i, p)).length, 0);
+  const reduceMotion = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+  const dirty = () => JSON.stringify(sent) !== JSON.stringify(song);
 
-  // ---------- The app window ----------
-  function render() {
-    const playing = state === "play";
-    const left = total - doneCount();
-    root.replaceChildren(
-      el("div", { class: "sim-hud" },
-        el("span", { class: "sim-time", text: clock(state === "done" ? finishedIn : state === "play" ? performance.now() - startedAt : 0), "aria-label": "Time" }),
-        el("div", { class: "sim-bar", "aria-hidden": "true" }, el("span", { class: "sim-bar__fill" }), el("span", { class: "sim-bar__mark", text: "10:00" })),
-        el("span", { class: "sim-count", text: `${doneCount()} of ${total} parts` })),
-      el("div", { class: "app-window" },
-        el("div", { class: "app-titlebar" }, el("i"), el("i"), el("i"), el("span", { text: "Midiator" })),
-        el("div", { class: "app" },
-          el("header", { class: "app-top" },
-            el("span", { class: "app-brand" }, el("img", { src: "assets/midiator-mark.svg", alt: "", width: "20", height: "20" }), "midiator"),
-            el("nav", { class: "app-tabs" }, el("span", { class: "on", text: "Setlists" }), el("span", { text: "Songs" }), el("span", { text: "My presets" })),
-            el("span", { class: "app-spacer" }),
-            el("span", { class: "app-conn" }, el("span", { class: "app-dot" }), "MC6MK2 connected")),
-          el("main", { class: "app-main" },
-            el("div", { class: "app-head" },
-              el("div", {},
-                el("p", { class: "app-title", text: "This week" }),
-                el("p", { class: "app-sub", text: `${SETLIST.length} songs · MC6 banks ${FIRST_BANK}–${FIRST_BANK + SETLIST.length - 1}` })),
-              el("button", {
-                type: "button",
-                class: `app-btn${left === 0 && playing ? " primary" : ""}`,
-                disabled: !playing || left > 0,
-                title: left > 0 ? `${left} part${left === 1 ? "" : "s"} still need a sound` : null,
-                onclick: send,
-                text: `Send ${SETLIST.length} songs to MC6`,
-              })),
-            el("div", { class: "app-controls" },
-              el("span", { class: "app-field" }, "Controller", el("span", { class: "app-select", text: "MC6 mkII" })),
-              el("span", { class: "app-field" }, "First MC6 bank", el("span", { class: "app-select app-num", text: String(FIRST_BANK) })),
-              el("span", { class: "app-field" }, "Tempo switches", el("span", { class: "app-seg" }, el("span", { text: "Off" }), el("span", { class: "on", text: "Tap" }), el("span", { text: "−1 / +1" })))),
-            SETLIST.map((song, s) => songCard(song, s)))),
-        state === "intro" ? introCard() : null,
-        state === "done" ? doneCard() : null));
-    tick();
+  // ---------- The builder (left) ----------
+  function changed() {
+    renderBuilder();
+    renderStageState();
   }
 
-  function songCard(song, s) {
-    const done = song.parts.filter((_, p) => isDone(s, p)).length;
-    const cells = ORDER.map((slot) => {
-      if (slot === 5) return el("div", { class: "cell cell-tempo" }, el("span", { class: "cell-letter", text: "F" }), el("span", { class: "cell-name", text: "Tap tempo" }), el("span", { class: "cell-presets", text: "live BPM on the MC6" }));
-      const p = slot;
-      if (p >= song.parts.length) return el("div", { class: "cell cell-empty" }, el("span", { class: "cell-letter", text: LETTERS[slot] }), el("span", { class: "cell-add", text: "+ Add section" }));
-      const chosen = (picks[s] && picks[s][p]) || {};
-      const lines = Object.entries(chosen).map(([id, k]) => `${pedal(id).name} · ${pedal(id).presets[k]}`);
-      const isOpen = open && open.song === s && open.part === p;
-      return el("button", {
-        type: "button",
-        class: `cell cell-section${isOpen ? " selected" : ""}${lines.length ? "" : " cell-todo"}`,
-        disabled: state !== "play",
-        "aria-expanded": String(isOpen),
-        onclick: () => { open = isOpen ? null : { song: s, part: p }; render(); focusEditor(); },
-      },
-        el("span", { class: "cell-letter", text: LETTERS[slot] }),
-        el("span", { class: "cell-name", text: song.parts[p] }),
-        el("span", { class: "cell-presets", text: lines.length ? lines.join("\n") : "No presets picked" }));
-    });
-    const pill = state === "done"
-      ? el("span", { class: "app-pill st-ok", text: `On MC6 · bank ${FIRST_BANK + s}` })
-      : el("span", { class: "app-pill", text: `Bank ${FIRST_BANK + s} · ${done} of ${song.parts.length} parts` });
-    return el("section", { class: "song-card" },
-      el("div", { class: "song-head" },
-        el("span", { class: "song-grip", "aria-hidden": "true", text: "⋮⋮" }),
-        el("span", { class: "song-title", text: song.title }),
-        el("span", { class: "song-bpm" }, el("span", { class: "app-select app-num", text: String(song.bpm) }), "BPM"),
-        el("span", { class: "app-spacer" }),
-        pill),
-      el("div", { class: "mc6-grid" }, cells),
-      open && open.song === s ? editor(s, open.part) : null);
-  }
+  function renderBuilder() {
+    const b = root.querySelector(".demo__builder");
+    b.replaceChildren(
+      el("div", { class: "b-song" },
+        el("label", { class: "b-label", for: "demo-title", text: "Song" }),
+        el("div", { class: "b-song__row" },
+          el("input", {
+            id: "demo-title", class: "b-title", value: song.title, maxlength: "24", autocomplete: "off", spellcheck: "false",
+            oninput: (e) => { song.title = e.target.value; renderStageState(); },
+          }),
+          el("div", { class: "b-bpm", role: "group", "aria-label": "Tempo" },
+            el("button", { type: "button", "aria-label": "Slower", text: "−", onclick: () => { song.bpm = Math.max(40, song.bpm - 2); changed(); } }),
+            el("span", { text: `${song.bpm}` }, el("small", { text: " BPM" })),
+            el("button", { type: "button", "aria-label": "Faster", text: "+", onclick: () => { song.bpm = Math.min(200, song.bpm + 2); changed(); } }))),
+        el("div", { class: "b-chips" },
+          SONGS.filter((t) => t !== song.title).slice(0, 3).map((t) =>
+            el("button", { type: "button", class: "chip", text: t, onclick: () => { song.title = t; changed(); } })))),
 
-  // The section editor: one preset picker per pedal, as in the app.
-  function editor(s, p) {
-    picks[s][p] = picks[s][p] || {};
-    const chosen = picks[s][p];
-    return el("div", { class: "section-editor" },
-      el("div", { class: "se-name" },
-        el("span", { class: "app-select se-title", text: SETLIST[s].parts[p] }),
-        el("span", { class: "se-hint", text: "Pick the saved sound each pedal plays in this part." })),
-      el("div", { class: "se-pedals" },
-        rig.map((id) => {
-          const pd = pedal(id);
-          return el("label", { class: "se-pedal" },
-            pd.name,
-            el("select", {
-              onchange: (e) => {
-                if (e.target.value === "") delete chosen[id];
-                else chosen[id] = Number(e.target.value);
-                const keep = document.activeElement && document.activeElement.dataset.pedal;
-                render();
-                if (keep) root.querySelector(`select[data-pedal="${keep}"]`)?.focus({ preventScroll: true });
+      el("div", { class: "b-board" },
+        el("p", { class: "b-label", text: "Your pedals" }),
+        el("div", { class: "b-chips" },
+          PEDALS.map((p) => {
+            const on = song.rig.includes(p.id);
+            return el("button", {
+              type: "button", class: `chip chip--pedal${on ? " on" : ""}`, "aria-pressed": String(on), style: `--c:${p.color}`,
+              title: on && song.rig.length === 1 ? "Keep at least one pedal" : null,
+              onclick: () => {
+                if (on && song.rig.length === 1) return;
+                song.rig = on ? song.rig.filter((r) => r !== p.id) : [...song.rig, p.id].slice(-3);
+                changed();
               },
-              "data-pedal": id,
-            },
-              el("option", { value: "", text: "— don't change —" }),
-              pd.presets.map((name, k) => {
-                const o = el("option", { value: String(k), text: name });
-                if (chosen[id] === k) o.selected = true;
-                return o;
-              })));
-        })),
-      el("div", { class: "se-actions" },
-        el("span", { class: "app-spacer" }),
-        el("button", { type: "button", class: "app-btn primary", onclick: nextPart, text: "Done" })));
+            }, el("i"), p.name);
+          }))),
+
+      el("div", { class: "b-parts" },
+        el("p", { class: "b-label", text: "A sound for each part" }, el("span", { class: "b-hint", text: "tap a sound to change it" })),
+        song.parts.map((part, i) =>
+          el("div", { class: "part" },
+            el("span", { class: "part__key", text: LETTERS[i] }),
+            el("button", {
+              type: "button", class: "part__name", text: part.name, title: "Rename",
+              onclick: () => { part.name = PART_NAMES[(PART_NAMES.indexOf(part.name) + 1) % PART_NAMES.length]; changed(); },
+            }),
+            el("div", { class: "part__sounds" },
+              song.rig.map((id) => {
+                const p = pedal(id);
+                const k = part.picks[id];
+                return el("button", {
+                  type: "button", class: `sound${k === undefined ? " sound--off" : ""}`, style: `--c:${p.color}`,
+                  "aria-label": `${p.name}: ${k === undefined ? "no change" : p.presets[k]}. Change`,
+                  onclick: () => {
+                    // Cycle through the pedal's presets, then "no change", then round again.
+                    const next = k === undefined ? 0 : k + 1;
+                    if (next >= p.presets.length) delete part.picks[id];
+                    else part.picks[id] = next;
+                    changed();
+                  },
+                }, el("i"), el("span", { text: k === undefined ? "—" : p.presets[k] }));
+              })),
+            song.parts.length > 1
+              ? el("button", { type: "button", class: "part__x", "aria-label": `Remove ${part.name}`, text: "×", onclick: () => { song.parts.splice(i, 1); changed(); } })
+              : null)),
+        el("div", { class: "b-row" },
+          song.parts.length < MAX_PARTS
+            ? el("button", {
+                type: "button", class: "chip chip--ghost", text: "+ Add part",
+                onclick: () => {
+                  const used = song.parts.map((p) => p.name);
+                  song.parts.push({ name: PART_NAMES.find((n) => !used.includes(n)) || "Tag", picks: {} });
+                  changed();
+                },
+              })
+            : null,
+          el("button", { type: "button", class: "chip chip--ghost", text: "Shuffle sounds", onclick: shuffle }))),
+
+      el("div", { class: "b-send" },
+        el("button", { type: "button", class: "px-btn", onclick: send, text: sent && !dirty() ? "Sent!" : sent ? "Send again" : "Send" }),
+        el("span", { class: "b-send__note", text: sent && !dirty() ? "Now stomp a switch on the board." : "Puts this song on the controller." })));
   }
 
-  function focusEditor() {
-    root.querySelector(".section-editor select")?.focus({ preventScroll: true });
-    root.querySelector(".section-editor")?.scrollIntoView({ block: "nearest", behavior: "smooth" });
+  function shuffle() {
+    for (const part of song.parts) {
+      part.picks = {};
+      for (const id of song.rig) if (Math.random() > 0.15) part.picks[id] = Math.floor(Math.random() * pedal(id).presets.length);
+    }
+    changed();
   }
 
-  // Done closes this part and opens the next one that still needs a sound.
-  function nextPart() {
-    const all = SETLIST.flatMap((song, s) => song.parts.map((_, p) => ({ song: s, part: p })));
-    const here = all.findIndex((x) => open && x.song === open.song && x.part === open.part);
-    const next = [...all.slice(here + 1), ...all.slice(0, here + 1)].find((x) => !isDone(x.song, x.part));
-    open = next || null;
-    render();
-    if (next) focusEditor();
-    else root.querySelector(".app-head .app-btn")?.focus({ preventScroll: true });
+  // ---------- The board (right) ----------
+  function renderStage() {
+    const s = root.querySelector(".demo__stage");
+    s.replaceChildren(
+      el("div", { class: "mc" },
+        el("div", { class: "mc__screen" },
+          el("span", { class: "mc__bank", text: "BANK 1" }),
+          el("span", { class: "mc__title" }),
+          el("span", { class: "mc__bpm" })),
+        el("div", { class: "mc__grid" },
+          // Top row D E F, bottom row A B C, like the hardware.
+          [3, 4, 5, 0, 1, 2].map((slot) =>
+            el("button", {
+              type: "button", class: `mc__sw${slot === 5 ? " mc__sw--tap" : ""}`, "data-slot": String(slot),
+              onclick: () => stomp(slot),
+            }, el("span", { class: "mc__led" }), el("span", { class: "mc__name" }), el("span", { class: "mc__foot", "aria-hidden": "true" }))))),
+      el("div", { class: "rig" }),
+      el("p", { class: "stage__hint", "aria-live": "polite" }));
+    renderStageState();
   }
 
-  // ---------- Before and after ----------
-  function introCard() {
-    const available = PEDALS.filter((p) => !rig.includes(p.id));
-    return el("div", { class: "app-overlay" },
-      el("div", { class: "app-dialog" },
-        el("p", { class: "app-dialog__title", text: "Your pedalboard" }),
-        el("p", { class: "app-dialog__sub", text: `Each pedal already has 10 sounds saved on it, like yours. Add or remove pedals to match your board, then give all ${total} parts of this week's ${SETLIST.length} songs their sounds.` }),
-        el("ul", { class: "rig" },
-          rig.map((id) =>
-            el("li", {},
-              el("span", { text: pedal(id).name }),
-              el("span", { class: "rig-n", text: "10 presets" }),
-              rig.length > 1 ? el("button", { type: "button", class: "rig-x", "aria-label": `Remove ${pedal(id).name}`, text: "×", onclick: () => { rig = rig.filter((r) => r !== id); render(); } }) : null)),
-          available.length
-            ? el("li", { class: "rig-add" },
-                el("select", { "aria-label": "Add a pedal", onchange: (e) => { if (e.target.value) { rig.push(e.target.value); render(); } } },
-                  el("option", { value: "", text: "+ Add a pedal" }),
-                  available.map((p) => el("option", { value: p.id, text: p.name }))))
-            : null),
-        el("div", { class: "start-row" },
-          el("button", { type: "button", class: "px-btn", onclick: start }, "Start"),
-          el("span", { class: "start-note", text: "The clock starts now. Beat 10:00." }))));
-  }
-
-  function doneCard() {
-    const under = TEN_MINUTES - finishedIn;
-    const share = `I set up ${total} song-specific pedal presets for this week in ${clock(finishedIn)} with Midiator. Beat my time: ${SITE}#try`;
-    const shareBtn = el("button", {
-      type: "button",
-      class: "app-btn",
-      text: "Share my time",
-      onclick: async () => {
-        try {
-          if (navigator.share) await navigator.share({ text: share });
-          else {
-            await navigator.clipboard.writeText(share);
-            shareBtn.textContent = "Copied!";
-          }
-        } catch {
-          /* share sheet closed */
-        }
-      },
+  // What's on the board follows what was SENT, not what's being edited, like the real thing.
+  function renderStageState() {
+    const s = root.querySelector(".demo__stage");
+    const shown = sent || { title: "", bpm: null, parts: [], rig: song.rig };
+    s.classList.toggle("is-empty", !sent);
+    s.querySelector(".mc__title").textContent = sent ? (shown.title || "Untitled").toUpperCase().slice(0, 16) : "READY";
+    s.querySelector(".mc__bpm").textContent = sent ? `${shown.bpm} BPM` : "";
+    s.querySelectorAll(".mc__sw").forEach((sw) => {
+      const slot = Number(sw.dataset.slot);
+      const name = slot === 5 ? (sent ? `TAP ${shown.bpm}` : "") : shown.parts[slot]?.name || "";
+      sw.querySelector(".mc__name").textContent = name;
+      sw.disabled = !sent || (slot !== 5 && !shown.parts[slot]);
+      sw.classList.toggle("is-live", sent && live === slot);
     });
-    return el("div", { class: "app-overlay" },
-      el("div", { class: "app-dialog app-dialog--done" },
-        el("p", { class: "app-dialog__title", text: "Setlist ready" }),
-        el("p", { class: "done-time", text: clock(finishedIn) }),
-        el("p", { class: "app-dialog__sub", text: under > 0
-          ? `${total} song-specific presets on ${rig.length} pedals, ${spoken(under)} under ten minutes. No more small, medium and large every week.`
-          : `${total} song-specific presets on ${rig.length} pedals. Next week is quicker: your songs are already saved.` }),
-        el("div", { class: "done-actions" },
-          el("a", { class: "app-btn primary big", href: "#download", text: "Try it now: Download for Mac" }),
-          shareBtn,
-          el("button", { type: "button", class: "app-btn", text: "Play again", onclick: () => { state = "intro"; picks = []; open = null; render(); } }))));
-  }
-
-  // ---------- Clock ----------
-  function start() {
-    picks = SETLIST.map((song) => song.parts.map(() => null));
-    open = { song: 0, part: 0 };
-    startedAt = performance.now();
-    state = "play";
-    clearInterval(timer);
-    timer = setInterval(tick, 250);
-    render();
-    focusEditor();
+    const rig = s.querySelector(".rig");
+    const part = sent && live !== null && live !== 5 ? shown.parts[live] : null;
+    rig.replaceChildren(
+      ...shown.rig.map((id) => {
+        const p = pedal(id);
+        const k = part ? part.picks[id] : undefined;
+        const box = el("div", { class: `ped${k !== undefined ? " is-on" : ""}`, style: `--c:${p.color}` },
+          el("span", { class: "ped__lcd", text: k !== undefined ? p.presets[k] : "—" }),
+          el("span", { class: "ped__name", text: p.name }),
+          el("span", { class: "ped__led" }));
+        return box;
+      }));
+    const hint = s.querySelector(".stage__hint");
+    hint.textContent = !sent
+      ? "Press SEND to put your song on the board."
+      : dirty()
+        ? "You changed the song. Press SEND again to update the board."
+        : live === null
+          ? "Stomp a switch."
+          : live === 5
+            ? `Tap tempo: ${shown.bpm} BPM.`
+            : `${shown.parts[live].name}: every pedal switched at once.`;
+    s.classList.toggle("is-stale", !!sent && dirty());
   }
 
   function send() {
-    clearInterval(timer);
-    finishedIn = performance.now() - startedAt;
-    open = null;
-    state = "done";
-    render();
+    sent = structuredClone(song);
+    live = null;
+    renderBuilder();
+    renderStageState();
+    const s = root.querySelector(".demo__stage");
+    // Switches fill in one by one, like a bank being written.
+    if (!reduceMotion) {
+      s.querySelectorAll(".mc__sw").forEach((sw, i) => {
+        sw.classList.remove("flash");
+        void sw.offsetWidth;
+        sw.style.animationDelay = `${i * 70}ms`;
+        sw.classList.add("flash");
+      });
+    }
+    clearInterval(tapTimer);
+    const tap = s.querySelector(".mc__sw--tap");
+    tapTimer = setInterval(() => {
+      tap.classList.add("beat");
+      setTimeout(() => tap.classList.remove("beat"), 90);
+    }, 60000 / sent.bpm);
+    if (window.matchMedia("(max-width: 860px)").matches) s.scrollIntoView({ behavior: reduceMotion ? "auto" : "smooth", block: "center" });
   }
 
-  function tick() {
-    const ms = state === "done" ? finishedIn : state === "play" ? performance.now() - startedAt : 0;
-    const t = root.querySelector(".sim-time");
-    const bar = root.querySelector(".sim-bar__fill");
-    if (t) t.textContent = clock(ms);
-    if (bar) {
-      bar.style.width = `${Math.min(100, (ms / TEN_MINUTES) * 100)}%`;
-      bar.classList.toggle("over", ms > TEN_MINUTES);
+  function stomp(slot) {
+    if (!sent) return;
+    live = slot;
+    renderStageState();
+    root.querySelectorAll(".ped.is-on").forEach((p) => {
+      p.classList.remove("pop");
+      void p.offsetWidth;
+      p.classList.add("pop");
+    });
+    if (!stomped && slot !== 5) {
+      stomped = true;
+      root.querySelector(".demo__done").hidden = false;
     }
   }
 
-  render();
+  root.append(
+    el("div", { class: "demo__grid" },
+      el("div", { class: "demo__builder" }),
+      el("div", { class: "demo__stage" })),
+    el("div", { class: "demo__done", hidden: true },
+      el("p", {}, el("strong", { text: "That's Midiator." }), " Now picture your whole setlist, every week, in minutes."),
+      el("div", { class: "actions" },
+        el("a", { class: "btn btn--primary", "data-download": "", href: "https://github.com/samuelwan04-rgb/midiator/releases/latest", text: "Download for Mac" }),
+        el("button", {
+          type: "button", class: "btn", text: "Start over",
+          onclick: () => {
+            song = structuredClone(START);
+            sent = null;
+            live = null;
+            clearInterval(tapTimer);
+            changed();
+          },
+        }))));
+  renderBuilder();
+  renderStage();
 })();
